@@ -6454,7 +6454,137 @@ _**User (2026-02-27 01:27Z)**_
 
 _**Agent (model default, mode Agent)**_
 
+<think><details><summary>Thought Process</summary>
+**Planning Zeabur Deployment Steps**
 
+The user wants a step-by-step guide for deploying on Zeabur in small increments. I’ve provided some guidance before, but now I need to be more concise. Since I’m in agent mode, I could create documentation, but the user just wants guidance. First, I should check if they have their repository on GitHub. I'll clarify whether they want both backend and frontend covered because Zeabur supports both. 
+
+Let’s start with step 1: confirm the code is pushed to GitHub and Supabase is configured. I'll ask them to confirm before moving on to the next steps.</details></think>
+
+---
+
+### 我們用「小步驟」方式來部署到 Zeabur
+
+先講整體目標（之後每一步慢慢做）：
+- **後端**（Python FastAPI）放在 Zeabur 一個服務。
+- **前端**（HTML/JS）放在 Zeabur 另一個服務。
+- 前端只要填好 `config.json` 指向後端網址就可以。
+
+我先從 **第 1 步** 開始，如果你已經做過，就跟我說，我們直接跳下一步。
+
+---
+
+### 第 1 步：確認程式碼在 GitHub 上
+
+Zeabur 會從 Git 平台拉程式碼，所以要先確定：
+
+1. 你的專案資料夾是這個：
+   - `C:\Course_Similarity_Analyzer`
+2. 這個資料夾已經是一個 Git 專案，並且推到 GitHub。
+
+如果你還沒有推到 GitHub，可以在 PowerShell 執行這幾行（第一次而已）：
+
+```bash
+cd C:\Course_Similarity_Analyzer
+git init
+git add .
+git commit -m "initial version for Zeabur"
+git branch -M main
+git remote add origin https://github.com/你的帳號/你的專案名稱.git
+git push -u origin main
+```
+
+**請告訴我兩件事：**
+1. 你是否已經有 GitHub Repository 並且 push 成功？（有的話，可以直接給我 repo 的名稱就好）
+2. 如果中間 `git` 指令有卡住或出錯，把錯誤訊息貼給我，我幫你處理。
+
+等你回覆後，我們再做「第 2 步：在 Zeabur 建立後端服務」。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+這是我的GitHub Repository
+https://github.com/chtti-me/Course_Similarity_Analyzer
+我不曉得什麼是 repo名稱 
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Planning Zeabur Deployment Steps**
+
+I need to break down the Zeabur deployment into small, manageable chunks for clarity. The user has provided a GitHub URL, which relates to the repository named Course_Similarity_Analyzer. My next step is to address the Zeabur project and backend service. I'll make sure to be concise and not overwhelm the user with too much information at once. Plus, I have to keep in mind the markdown rules while I present it.</details></think>
+
+---
+
+很好，有這個就夠了 👍  
+你的 **repo 名稱** 就是網址最後這段：`Course_Similarity_Analyzer`。
+
+接下來我們一步一步在 Zeabur 部署後端。
+
+---
+
+### 第 2 步：在 Zeabur 建立「專案」和「後端服務」
+
+先處理後端（Python API），前端之後再說。
+
+#### 2-1. 建立 Zeabur 專案
+
+1. 打開瀏覽器，登入 Zeabur。
+2. 在首頁找「**New Project**」或「**新增專案**」，點下去。
+3. 輸入一個專案名稱，例如：`course-similarity-analyzer`，按確認。
+
+做完這裡先跟我說一聲：「專案建立好了」。
+
+---
+
+#### 2-2. 從 GitHub 匯入後端程式碼（先看就好，等你說好我再帶你點）
+
+等你說「專案建立好了」，下一步我會帶你在這個專案裡：
+
+- 新增一個服務
+- 選擇你的 GitHub `chtti-me/Course_Similarity_Analyzer`
+- 指定後端目錄是 `course_similarity_analyzer_backend`
+- 填入啟動指令
+
+你先完成 **2-1**，再回覆我，我再帶你做下一小步。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+專案建立好了
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Planning backend service creation**
+
+I need to start by determining how to create a backend service from GitHub. My first thought is to break this down into clear steps. I won't need any tools for this, so I'll focus on outlining the process. I wonder if I should begin with setting up the necessary files and directories, then move on to defining the service's structure. It feels important to make this as straightforward as possible! Let’s get organized.</details></think>
+
+---
+
+很好，我們來建「後端服務」。
+
+### 第 3 步：在這個 Zeabur 專案裡建立後端服務
+
+請在剛建立的專案畫面中照這樣做：
+
+1. 在專案頁裡，找到並點 **「+ New Service」**（或「新增服務」）。
+2. 選擇 **「Import from Git」** 或類似「從 GitHub 匯入」的選項。
+3. Zeabur 會請你選 Repository：
+   - 選擇：`chtti-me / Course_Similarity_Analyzer`
+4. 接下來會出現服務設定畫面，請確認／設定：
+   - **Service name**：可以填 `backend`（或任何你喜歡的名字）
+   - **Root / Base / Working Directory**（根目錄）：
+     - 請填：`course_similarity_analyzer_backend`
+
+先做到這一步就好：  
+**當你看到有一個服務，Root/Working Directory 設成 `course_similarity_analyzer_backend` 時，跟我說「後端服務建立畫面出現了」**（不用按 Deploy），我下一步再帶你填建置指令與啟動指令。
 
 ---
 
