@@ -6370,3 +6370,91 @@ $$;
 
 ---
 
+_**User (2026-02-27 01:27Z)**_
+
+有辦法部署到Netlify嗎？
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Clarifying Netlify Deployment**
+
+The user is asking about deploying to Netlify. We’ve talked about using Zeabur for the backend and frontend setup. Yes, they can deploy the frontend to Netlify, but the backend will need a different host, like Zeabur. 
+
+I'll provide clear steps without getting too verbose: 
+
+1. Keep the backend on Zeabur; host the frontend on Netlify.
+2. Make sure CORS allows the Netlify domain.
+3. Steps: push the repo, create a Netlify site from Git, set the base directory, and use `course_similarity_analyzer_web` for the publish directory. 
+
+I could also mention handling environment variables!
+**Considering Configurations for Static Site**
+
+I see that config.json has been committed, but it might not be the best option for storing secrets. They already have an anonymous key saved, which is public, so that's fine. Moving the config.json values to Netlify's environment variables could be a good idea for extra security, but it's optional. I should keep the explanation concise to make it easier for the user to understand their options!</details></think>
+
+---
+
+可以，但 **Netlify 只能放前端**，後端 API 仍然要放在別的地方（例如你現在用的 Zeabur/Supabase 後端）。做法是：
+
+### 1. 前提：後端已經有一個固定網址
+
+- 例如：`https://your-backend-name.zeabur.app`
+- `api_server.py` 已啟動，CORS 目前是 `allow_origins=["*"]`，可以讓 Netlify 網站呼叫。
+
+在 `course_similarity_analyzer_web/Data/config.json` 裡，先確認：
+
+```json
+{
+  "SUPABASE_URL": "https://你的專案.supabase.co",
+  "SUPABASE_ANON_KEY": "你的_anon_key",
+  "API_BASE_URL": "https://your-backend-name.zeabur.app"
+}
+```
+
+Commit 並 push 到 GitHub。
+
+---
+
+### 2. 在 Netlify 部署前端
+
+1. 登入 Netlify → 點 **“Add new site” → “Import an existing project”**。
+2. 連結你的 GitHub Repository，選擇這個專案。
+3. 在設定畫面填入：
+   - **Base directory**（或 Root / Base）：`course_similarity_analyzer_web`
+   - **Build command**：留空（因為是純靜態檔案）
+   - **Publish directory**：`.`  
+4. 按 **Deploy site**。
+
+部署完成後，Netlify 會給你一個網址，例如：
+- `https://your-site-name.netlify.app`
+
+前端會從這個網址載入，所有 API 呼叫都打到 `config.API_BASE_URL`（也就是你後端的網址）。
+
+---
+
+### 3. 測試
+
+1. 打開 Netlify 網址。
+2. 用帳號登入。
+3. 測試：
+   - 「② 登錄規劃中課程」是否能新增、儲存。
+   - 「③ 相似度查詢/建議」是否能正常呼叫後端，顯示結果。
+
+如果你願意，我也可以幫你寫一份專門給 Netlify 用的簡短部署備忘錄（可以放在 `DEPLOY_NETLIFY.md`）。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+若則選擇用Netlify部署 前後端要分開部署在不同服務 好像不太方便 那我還是部署在Zeabur好了 一步一步教我做 不要一次講完講太多
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+
+
+---
+
