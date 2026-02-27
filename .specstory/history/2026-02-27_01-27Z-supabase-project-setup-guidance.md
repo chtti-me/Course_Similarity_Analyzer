@@ -6588,3 +6588,122 @@ I need to start by determining how to create a backend service from GitHub. My f
 
 ---
 
+_**User (2026-02-27 01:27Z)**_
+
+部署完成了，但使用過程中發現  歷史開班往前推N天、未來開班往後推N天的功能 好像沒有效用 例如 我選擇往前推10天 但是距今200天以上還是會列入相似度比對的清單 
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Adjusting SQL and API filters**
+
+I'm planning to adjust the SQL and API to add explicit filters for daysBack and daysForward specific to non-planning courses. We could also allow an optional filter for planning courses, treating them as if their start_date is within a certain window, while still keeping them visible even when far out. The spec suggests considering the history window, and I think we can treat courses with a NULL start_date as always included. For those with dates, we'd apply the filter accordingly.
+**Simplifying query conditions**
+
+I’m simplifying the query by ensuring we treat courses without a start_date as always included, which typically applies to planning. My new condition checks if c.embedding isn't null and whether the start_date is within the specified range. This means planning and non-planning courses are treated the same, with planning status no longer special. However, they might want future planned courses filtered, but they didn’t specify. My approach will include all necessary courses, while respecting any slider adjustments they may use.
+**Identifying the source of the bug**
+
+I’m trying to figure out what’s failing. It might be that we didn’t redeploy the backend after changing the match_courses function, but the error indicates that SQL changes were successful. I suspect some courses have start_dates in the wrong format, affecting comparisons. The 200-day difference could be irrelevant if they’re still between the specified start dates. They mentioned a slider for 10 days, but data outside that range still appears, suggesting our condition checks, like start_from, might be getting NULL from the API when it shouldn't.
+**Confirming function definitions**
+
+I need to ensure the match_courses function is defined correctly with appropriate date filters. The error about changing the return type suggests the initial function was dropped and recreated as intended. There might be an issue where start_from is defined as TEXT in SQL while FastAPI passes it as JSON. The Postgres function expects specific argument types. Another potential bug could be related to how n_days_back and days_forward are being handled; if the slider's values aren’t passed to the API correctly, that could lead to issues.
+**Explaining potential issues**
+
+It seems the user is confused about the date filters in relation to planning courses. They expect to see a 10-day restriction, but 200-day courses are still appearing due to the vector search not filtering correctly; we only apply filters in SQL. I need to clarify that our function includes planning courses regardless of their date, which might make the slider appear ineffective. I should ask them to check if out-of-range courses are marked as planning and explain how we can change the SQL to restrict those if needed.</details></think>
+
+---
+
+### 為什麼「往前 N 天 / 往後 N 天」看起來沒有效？
+
+依照現在的實作：
+
+- **後端 API** 會算出：
+  - `start_from = 今天 - N 天`
+  - `start_to = 今天 + M 天`
+- 在資料庫函數 `match_courses` 裡，條件是：
+
+```sql
+WHERE c.embedding IS NOT NULL
+  AND (
+      -- 已確定開班的課程：有套用日期範圍
+      (c.status != 'planning' AND 
+       (start_from IS NULL OR c.start_date >= start_from) AND
+       (start_to IS NULL OR c.start_date <= start_to))
+      OR
+      -- 規劃中的課程：不限制日期，全部納入
+      (c.status = 'planning')
+  )
+```
+
+也就是說：
+
+- **已開班 / 未來開班** 的課程，確實會被 `N 天`、`M 天` 限制住。
+- **`status = 'planning'` 的「規劃中課程」**，是「不看日期、全部都納入」的。  
+  所以即使你把 slider 設成「往前 10 天」，那些規劃中的課（標題旁邊有我加的 `[規劃中]` 標籤）還是會出現在相似度結果裡，這會讓你感覺「好像 10 天沒有作用」。
+
+你可以先確認一下：
+- 那些「距今 200 天以上」的課，是不是在結果中有顯示 `[規劃中]`？  
+  - 有的話：就是目前設計本來就「不限制規劃中」，功能是正常的。
+  - 如果沒有 `[規劃中]`，那就代表真的有 bug，我再幫你調整 SQL 條件。
+
+---
+
+### 如果你希望「所有課程（包含規劃中）」都被 N/M 天限制
+
+只要把 `match_courses` 的條件改成「有日期的才套用範圍、沒日期的全部納入」，而 **不再特別放寬 `status = 'planning'`**，可以在 Supabase SQL Editor 用這版取代原本的函數（先 DROP 再 CREATE）：
+
+```sql
+DROP FUNCTION IF EXISTS public.match_courses(extensions.vector, TEXT, TEXT, INTEGER);
+
+CREATE OR REPLACE FUNCTION public.match_courses(
+    query_embedding extensions.vector(384),
+    start_from TEXT,
+    start_to TEXT,
+    match_count INT DEFAULT 10
+)
+RETURNS TABLE (
+    id TEXT,
+    title TEXT,
+    start_date TEXT,
+    level TEXT,
+    status TEXT,
+    campus TEXT,
+    similarity FLOAT
+)
+LANGUAGE sql STABLE
+AS $$
+    SELECT
+        c.id,
+        c.title,
+        c.start_date,
+        c.level,
+        c.status,
+        c.campus,
+        1 - (c.embedding <=> query_embedding) AS similarity
+    FROM public.courses c
+    WHERE c.embedding IS NOT NULL
+      AND (
+        -- 沒有日期的課程：一律納入（常見於資料缺漏）
+        c.start_date IS NULL
+        OR (
+          -- 有日期的課程：必須落在指定範圍內
+          (start_from IS NULL OR c.start_date >= start_from) AND
+          (start_to IS NULL OR c.start_date <= start_to)
+        )
+      )
+    ORDER BY c.embedding <=> query_embedding
+    LIMIT match_count;
+$$;
+```
+
+這樣之後的行為會變成：
+
+- 任何有 `start_date` 的課程（不管是歷史 / 未來 / 規劃中），都會被 N/M 天限制。
+- 沒有 `start_date` 的課程（真的沒填日期的），仍然會全部納入。
+
+如果你先幫我確認一下：「超過 200 天的那幾筆是不是 `[規劃中]`」，我可以依照你的偏好，幫你選一個版本（保留現在「規劃中不受限制」，或改成「全部看日期」）。
+
+---
+
