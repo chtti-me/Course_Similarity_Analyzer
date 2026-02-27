@@ -112,16 +112,44 @@
   async function renderPlanningList() {
     const el = document.getElementById("planningList");
     el.innerHTML = "載入中…";
-    const { data, error } = await supabaseClient.from("courses").select("id,title,level,description,updated_at").eq("status", "planning").order("updated_at", { ascending: false });
+    const { data, error } = await supabaseClient
+      .from("courses")
+      .select("id,title,campus,instructor,start_date,audience,level,updated_at")
+      .eq("status", "planning")
+      .order("updated_at", { ascending: false });
     if (error) {
       el.innerHTML = "<p>無法載入：" + error.message + "</p>";
       return;
     }
-    let html = "<table><thead><tr><th>課程名稱</th><th>難易度</th><th>更新時間</th>" + (isAdmin() ? "<th>操作</th>" : "") + "</tr></thead><tbody>";
+    // 規劃中課程：顯示主要欄位（無班代號）
+    let html =
+      "<table><thead><tr><th>班名</th><th>校區</th><th>導師</th><th>開班日期</th><th>對象</th><th>難易度</th><th>更新時間</th>" +
+      (isAdmin() ? "<th>操作</th>" : "") +
+      "</tr></thead><tbody>";
     (data || []).forEach(function (row) {
-      html += "<tr><td>" + escapeHtml(row.title || "") + "</td><td>" + escapeHtml(row.level || "") + "</td><td>" + (row.updated_at ? new Date(row.updated_at).toLocaleString("zh-TW") : "") + "</td>";
+      html +=
+        "<tr><td>" +
+        escapeHtml(row.title || "") +
+        "</td><td>" +
+        escapeHtml(row.campus || "") +
+        "</td><td>" +
+        escapeHtml(row.instructor || "") +
+        "</td><td>" +
+        escapeHtml(row.start_date || "") +
+        "</td><td>" +
+        escapeHtml(row.audience || "") +
+        "</td><td>" +
+        escapeHtml(row.level || "") +
+        "</td><td>" +
+        (row.updated_at ? new Date(row.updated_at).toLocaleString("zh-TW") : "") +
+        "</td>";
       if (isAdmin()) {
-        html += '<td><button type="button" class="btn btn-ghost btn-edit-planning" data-id="' + escapeHtml(row.id) + '">編輯</button> <button type="button" class="btn btn-danger btn-delete-planning" data-id="' + escapeHtml(row.id) + '">刪除</button></td>';
+        html +=
+          '<td><button type="button" class="btn btn-ghost btn-edit-planning" data-id="' +
+          escapeHtml(row.id) +
+          '">編輯</button> <button type="button" class="btn btn-danger btn-delete-planning" data-id="' +
+          escapeHtml(row.id) +
+          '">刪除</button></td>';
       }
       html += "</tr>";
     });
@@ -140,12 +168,24 @@
     document.getElementById("planningFormTitle").textContent = id ? "編輯規劃中課程" : "新增規劃中課程";
     document.getElementById("planningId").value = id || "";
     document.getElementById("planningTitle").value = "";
+    document.getElementById("planningCampus").value = "";
+    document.getElementById("planningInstructor").value = "";
+    document.getElementById("planningStartDate").value = "";
+    document.getElementById("planningAudience").value = "";
     document.getElementById("planningLevel").value = "";
     document.getElementById("planningDescription").value = "";
     if (id) {
-      const { data: row } = await supabaseClient.from("courses").select("title,level,description").eq("id", id).single();
+      const { data: row } = await supabaseClient
+        .from("courses")
+        .select("title,campus,instructor,start_date,audience,level,description")
+        .eq("id", id)
+        .single();
       if (row) {
         document.getElementById("planningTitle").value = row.title || "";
+        document.getElementById("planningCampus").value = row.campus || "";
+        document.getElementById("planningInstructor").value = row.instructor || "";
+        document.getElementById("planningStartDate").value = row.start_date || "";
+        document.getElementById("planningAudience").value = row.audience || "";
         document.getElementById("planningLevel").value = row.level || "";
         document.getElementById("planningDescription").value = row.description || "";
       }
@@ -157,12 +197,59 @@
     e.preventDefault();
     const id = document.getElementById("planningId").value.trim();
     const title = document.getElementById("planningTitle").value.trim();
+    const campus = document.getElementById("planningCampus").value.trim();
+    const instructor = document.getElementById("planningInstructor").value.trim();
+    const startDate = document.getElementById("planningStartDate").value;
+    const audience = document.getElementById("planningAudience").value.trim();
     const level = document.getElementById("planningLevel").value.trim();
     const description = document.getElementById("planningDescription").value.trim();
     if (!title) return;
+    if (!campus) {
+      alert("請選擇校區");
+      return;
+    }
     const now = new Date().toISOString();
+    
+    // 先呼叫後端 API 生成 embedding
+    let embedding = null;
+    let embedding_dim = null;
+    try {
+      const embRes = await fetch(config.API_BASE_URL + "/api/generate-embedding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title,
+          description: description,
+          audience: audience,
+        }),
+      });
+      if (embRes.ok) {
+        const embData = await embRes.json();
+        embedding = embData.embedding;
+        embedding_dim = embData.embedding_dim;
+      } else {
+        console.warn("生成 embedding 失敗，但繼續儲存課程資料");
+      }
+    } catch (err) {
+      console.warn("無法連線至 embedding API，但繼續儲存課程資料", err);
+    }
+    
     if (id) {
-      const { error } = await supabaseClient.from("courses").update({ title: title, level: level || null, description: description || null, updated_at: now }).eq("id", id);
+      const updateData = {
+        title: title,
+        campus: campus || null,
+        instructor: instructor || null,
+        start_date: startDate || null,
+        audience: audience || null,
+        level: level || null,
+        description: description || null,
+        updated_at: now,
+      };
+      if (embedding) {
+        updateData.embedding = embedding;
+        updateData.embedding_dim = embedding_dim;
+      }
+      const { error } = await supabaseClient.from("courses").update(updateData).eq("id", id);
       if (error) alert("更新失敗：" + error.message);
     } else {
       const payload = {
@@ -170,12 +257,20 @@
         source: "manual",
         status: "planning",
         title: title,
+        campus: campus || null,
+        instructor: instructor || null,
+        start_date: startDate || null,
+        audience: audience || null,
         level: level || null,
         description: description || null,
         content_hash: "manual-" + now,
         created_at: now,
         updated_at: now,
       };
+      if (embedding) {
+        payload.embedding = embedding;
+        payload.embedding_dim = embedding_dim;
+      }
       const { error } = await supabaseClient.from("courses").insert(payload);
       if (error) alert("新增失敗：" + error.message);
     }
@@ -196,13 +291,22 @@
     const level = document.getElementById("similarityLevel").value.trim();
     const daysBack = parseInt(document.getElementById("daysBack").value, 10);
     const daysForward = parseInt(document.getElementById("daysForward").value, 10);
+    const minSimilarity = parseFloat(document.getElementById("minSimilarity").value) / 100; // 轉換為 0-1 範圍
+    const topK = parseInt(document.getElementById("topK").value, 10) || 10;
     const el = document.getElementById("similarityResults");
     el.innerHTML = "查詢中…";
     try {
       const r = await fetch(config.API_BASE_URL + "/api/similarity", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query, level: level || null, n_days_back: daysBack, n_days_forward: daysForward, top_k: 10 }),
+        body: JSON.stringify({
+          query: query,
+          level: level || null,
+          n_days_back: daysBack,
+          n_days_forward: daysForward,
+          top_k: topK,
+          min_similarity: minSimilarity,
+        }),
       });
       const data = await r.json();
       if (!r.ok) {
@@ -215,7 +319,11 @@
         return;
       }
       el.innerHTML = results.map(function (row) {
-        return '<div class="item">' + escapeHtml(row.title || "") + " <span class='similarity'>相似度 " + (row.similarity != null ? (Math.round(row.similarity * 100) + "%") : "-") + "</span>" + (row.start_date ? " " + row.start_date : "") + (row.level ? " " + row.level : "") + "</div>";
+        const statusLabel = row.status === "planning" ? " <span style='color: #ff9800; font-weight: bold;'>[規劃中]</span>" : "";
+        const campusLabel = row.campus ? " <span style='color: #666;'>[" + escapeHtml(row.campus) + "]</span>" : "";
+        const dateLabel = row.start_date ? " <span style='color: #666;'>" + escapeHtml(row.start_date) + "</span>" : "";
+        const levelLabel = row.level ? " <span style='color: #666;'>" + escapeHtml(row.level) + "</span>" : "";
+        return '<div class="item">' + escapeHtml(row.title || "") + statusLabel + campusLabel + " <span class='similarity'>相似度 " + (row.similarity != null ? (Math.round(row.similarity * 100) + "%") : "-") + "</span>" + dateLabel + levelLabel + "</div>";
       }).join("");
     } catch (err) {
       el.innerHTML = "<p>無法連線至相似度 API（" + config.API_BASE_URL + "），請確認後端 api_server.py 已啟動。</p>";
@@ -227,6 +335,9 @@
   });
   document.getElementById("daysForward").addEventListener("input", function () {
     document.getElementById("daysForwardVal").textContent = this.value;
+  });
+  document.getElementById("minSimilarity").addEventListener("input", function () {
+    document.getElementById("minSimilarityVal").textContent = this.value;
   });
 
   // ---------- ④ 資料庫瀏覽 ----------

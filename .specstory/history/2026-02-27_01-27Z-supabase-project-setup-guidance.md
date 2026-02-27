@@ -5031,3 +5031,1342 @@ git push
 
 ---
 
+_**User (2026-02-27 01:27Z)**_
+
+目前新增規劃中課程的功能 只有 課程名稱（應該修改為「班名」才對）、難易度、說明（選填）這三個欄位
+但資料庫裡面明明很多欄位啊
+例如：
+班代號	班名	校區	導師	開班日期	對象	難易度
+
+但規劃中的課程 的確不會有所謂的「班代號」
+班代號通常是確定開的班才會有
+但至少要能選擇校區（院本部、台中所、高雄所三選一）
+輸入導師姓名、選擇開班日期（用「日期」選擇的selector網頁元件去做）、難易度、對象...等資訊
+不然 會發現 status為planning的班 資料大多都是空的
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Enhancing course creation UI**
+
+The user wants to improve the "規劃中課程" creation UI, which currently only has fields for course name, level, and description. They’re asking for additional fields like campus selection, instructor, start date, target audience, and difficulty. Interestingly, they noted that planning courses don’t have a class code. I need to update the frontend and check the backend API to ensure it supports these fields and relates to Supabase. I'll review the script.js and maybe HTML to see what adjustments are needed.</details></think>
+
+---
+
+我來幫你把「規劃中課程」那一段表單擴充成：班名、校區(3選1)、導師、開班日期(日期選擇器)、對象、難易度、說明，並確保存進 `courses` 表時 status=planning、其他欄位都有填。先看一下目前前端的 HTML 和 `script.js` 怎麼實作這個功能，然後直接幫你改好。
+
+---
+
+<tool-use data-tool-type="task" data-tool-name="todo_write">
+<details><summary>Tool use: **todo_write** • Todo List</summary>
+
+- [-] 擴充前端「規劃中課程」表單欄位：班名、校區(院本部/台中所/高雄所)、導師、開班日期、對象、難易度、說明
+- [ ] 更新前端 script.js：新增/更新規劃中課程時寫入 courses 表對應欄位，status=planning
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: C:\Course_Similarity_Analyzer\course_similarity_analyzer_web\index.html</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: C:\Course_Similarity_Analyzer\course_similarity_analyzer_web\script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+**Planning Modifications**
+
+I need to make some adjustments to the project. In the `index.html`, I'll change the label text from "課程名稱" to "班名" and add new fields, including a campus select and inputs for instructor, start date, and audience. The order will be班名, 校區, 導師, 開班日期, 對象, 難易度, and 說明. I'll also ensure the planning list table has columns for these updates along with the updated_at field. It’s about meeting user needs and maintaining the design!
+**Updating Planning Form**
+
+I need to adjust the `openPlanningForm` function to load new columns and pre-fill the form. In JavaScript, for both update and insert actions, I’ll set fields like campus, instructor, start date (as an ISO date), audience, level, and description. The status will remain 'planning' and source 'manual.' I’ll need to make sure the database allows `NULL` values for class_code, which it does. I also have to change label texts and add new fields in the HTML dialog without breaking anything!
+**Designing Planning Fields**
+
+I’m working on designing the fields snippet that will follow the hidden planningId. I’ll create labels and inputs for班名, 校區, 導師, 開班日期, and 對象, ensuring that I change any existing label from 課程名稱 to 班名.
+
+In `script.js`, I need to update the `renderPlanningList` function to include new fields in the selection query. I’ll also adjust the table header to reflect the new headings. Plus, when opening the planning form, I’ll ensure the new fields are cleared and set default campus values, so users can make their choices easily!
+**Defaulting Fields and Submission Handling**
+
+I’m considering defaulting to the user's previously chosen options but keeping it simple. In the submit listener, I’ll read the new fields like campus, instructor, start date, and audience. For the campus, I must enforce the required property in the HTML for the select element so that browsers inherently check for that. 
+
+I realize that when using JavaScript with `preventDefault()`, I should check the required fields after the validation is performed automatically. Just to be safe, I’ll include my own validation for good measure!
+**Implementing Updates and Inserts**
+
+In the update branch, I’m preparing to call Supabase to update the record with the new fields. The `updatePayload` will include title, campus, instructor, start date, audience, level, description, and updated_at with the current timestamp.
+
+For the insert branch, I’ll create a `payload` with an ID, source as "manual," status as "planning," and class_code as null. The rest will mirror the same structure with relevant properties like title and audience.
+
+Additionally, since the user requested a label change from 課程名稱 to 班名, I’ll make sure to update that in the header too. I'll implement all of this using apply_patch!</details></think>
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="apply_patch">
+<details>
+<summary>Tool use: **apply_patch**</summary>
+
+
+Parameters:
+
+```json
+{
+  "relativeWorkspacePath": "C:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\index.html"
+}
+```
+Additional data:
+
+```json
+{
+  "codeblockId": "54bcb231-bf45-400d-8b2f-4dbd13d6333a",
+  "codeblock": {
+    "uri": {
+      "scheme": "file",
+      "authority": "",
+      "path": "/C:/Course_Similarity_Analyzer/course_similarity_analyzer_web/index.html",
+      "query": "",
+      "fragment": "",
+      "_formatted": "file:///c%3A/Course_Similarity_Analyzer/course_similarity_analyzer_web/index.html",
+      "_fsPath": "c:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\index.html"
+    },
+    "codeblockId": "54bcb231-bf45-400d-8b2f-4dbd13d6333a",
+    "codeBlockIdx": 0,
+    "content": "&lt;!DOCTYPE html&gt;\r\n&lt;html lang=\"zh-TW\"&gt;\r\n&lt;head&gt;\r\n  &lt;meta charset=\"UTF-8\"&gt;\r\n  &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"&gt;\r\n  &lt;title&gt;Course Similarity Analyzer&lt;/title&gt;\r\n  &lt;link rel=\"stylesheet\" href=\"style.css\"&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n  &lt;div class=\"app\"&gt;\r\n    &lt;!-- 頂部導覽：紅框四功能 --&gt;\r\n    &lt;header class=\"nav\" role=\"navigation\" aria-label=\"主要功能\"&gt;\r\n      &lt;h1 class=\"title\"&gt;Course Similarity Analyzer (MVP)&lt;/h1&gt;\r\n      &lt;nav class=\"tabs\" id=\"mainTabs\"&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"sync\" data-admin-only&gt;① 同步爬取 TIS&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"planning\"&gt;② 登錄規劃中課程&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"similarity\"&gt;③ 相似度查詢/建議&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"browse\"&gt;④ 資料庫瀏覽&lt;/button&gt;\r\n      &lt;/nav&gt;\r\n      &lt;div class=\"auth-area\"&gt;\r\n        &lt;span class=\"user-info\" id=\"userInfo\"&gt;&lt;/span&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnLogin\"&gt;登入&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnLogout\" hidden&gt;登出&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/header&gt;\r\n\r\n    &lt;main class=\"content\"&gt;\r\n      &lt;!-- ① 同步爬取 TIS（僅管理員） --&gt;\r\n      &lt;section id=\"panel-sync\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;同步爬取 TIS&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;同步由後端排程執行 &lt;code&gt;sync_cli.py&lt;/code&gt;，請在管理員電腦設定每日排程。下方顯示最近一次同步紀錄。&lt;/p&gt;\r\n        &lt;div id=\"syncLog\" class=\"sync-log\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ② 登錄規劃中課程 --&gt;\r\n      &lt;section id=\"panel-planning\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;登錄規劃中課程&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;規劃中課程列表；管理員可新增/編輯/刪除，一般使用者僅可檢視。&lt;/p&gt;\r\n        &lt;div class=\"toolbar\" data-admin-only&gt;\r\n          &lt;button type=\"button\" class=\"btn btn-primary\" id=\"btnAddPlanning\"&gt;新增規劃中課程&lt;/button&gt;\r\n        &lt;/div&gt;\r\n        &lt;div id=\"planningList\" class=\"table-wrap\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ③ 相似度查詢/建議 --&gt;\r\n      &lt;section id=\"panel-similarity\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;相似度查詢/建議&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;輸入你打算開的課，系統會在：歷史開班 + 未來即將開班 + 規劃中課程中找出相似者。&lt;/p&gt;\r\n        &lt;div class=\"form\"&gt;\r\n          &lt;label&gt;你要開的班名&lt;/label&gt;\r\n          &lt;input type=\"text\" id=\"similarityQuery\" placeholder=\"例如：Copilot\"&gt;\r\n          &lt;label&gt;你要開的難易度&lt;/label&gt;\r\n          &lt;select id=\"similarityLevel\"&gt;\r\n            &lt;option value=\"\"&gt;— 請選擇 —&lt;/option&gt;\r\n            &lt;option value=\"入門\"&gt;入門&lt;/option&gt;\r\n            &lt;option value=\"中階\"&gt;中階&lt;/option&gt;\r\n            &lt;option value=\"進階\"&gt;進階&lt;/option&gt;\r\n          &lt;/select&gt;\r\n          &lt;label&gt;比較: 歷史開班 (今天往前 N 天)&lt;/label&gt;\r\n          &lt;input type=\"range\" id=\"daysBack\" min=\"0\" max=\"365\" value=\"100\"&gt;\r\n          &lt;span id=\"daysBackVal\"&gt;100&lt;/span&gt; 天\r\n          &lt;label&gt;比較: 未來即將開班 (今天往後 M 天)&lt;/label&gt;\r\n          &lt;input type=\"range\" id=\"daysForward\" min=\"0\" max=\"365\" value=\"100\"&gt;\r\n          &lt;span id=\"daysForwardVal\"&gt;100&lt;/span&gt; 天\r\n          &lt;button type=\"button\" class=\"btn btn-primary\" id=\"btnSearchSimilarity\"&gt;查詢相似課程&lt;/button&gt;\r\n        &lt;/div&gt;\r\n        &lt;div id=\"similarityResults\" class=\"results\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ④ 資料庫瀏覽 --&gt;\r\n      &lt;section id=\"panel-browse\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;資料庫瀏覽&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;檢視目前資料庫所有課程；管理員可編輯/刪除，一般使用者僅可檢視。&lt;/p&gt;\r\n        &lt;div id=\"browseTable\" class=\"table-wrap\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n    &lt;/main&gt;\r\n  &lt;/div&gt;\r\n\r\n  &lt;!-- 登入彈窗 --&gt;\r\n  &lt;dialog id=\"loginDialog\"&gt;\r\n    &lt;form method=\"dialog\"&gt;\r\n      &lt;h3&gt;登入&lt;/h3&gt;\r\n      &lt;label&gt;Email&lt;/label&gt;\r\n      &lt;input type=\"email\" id=\"loginEmail\" required&gt;\r\n      &lt;label&gt;密碼&lt;/label&gt;\r\n      &lt;input type=\"password\" id=\"loginPassword\" required&gt;\r\n      &lt;div class=\"dialog-actions\"&gt;\r\n        &lt;button type=\"submit\" class=\"btn btn-primary\"&gt;登入&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnCancelLogin\"&gt;取消&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/form&gt;\r\n  &lt;/dialog&gt;\r\n\r\n  &lt;!-- 新增/編輯規劃中課程彈窗 --&gt;\r\n  &lt;dialog id=\"planningFormDialog\"&gt;\r\n    &lt;form method=\"dialog\" id=\"planningForm\"&gt;\r\n      &lt;h3 id=\"planningFormTitle\"&gt;新增規劃中課程&lt;/h3&gt;\r\n      &lt;input type=\"hidden\" id=\"planningId\"&gt;\r\n      &lt;label&gt;班名&lt;/label&gt;\r\n      &lt;input type=\"text\" id=\"planningTitle\" required&gt;\r\n      &lt;label&gt;校區&lt;/label&gt;\r\n      &lt;select id=\"planningCampus\" required&gt;\r\n        &lt;option value=\"\"&gt;— 請選擇 —&lt;/option&gt;\r\n        &lt;option value=\"院本部\"&gt;院本部&lt;/option&gt;\r\n        &lt;option value=\"台中所\"&gt;台中所&lt;/option&gt;\r\n        &lt;option value=\"高雄所\"&gt;高雄所&lt;/option&gt;\r\n      &lt;/select&gt;\r\n      &lt;label&gt;導師&lt;/label&gt;\r\n      &lt;input type=\"text\" id=\"planningInstructor\"&gt;\r\n      &lt;label&gt;開班日期&lt;/label&gt;\r\n      &lt;input type=\"date\" id=\"planningStartDate\"&gt;\r\n      &lt;label&gt;對象&lt;/label&gt;\r\n      &lt;textarea id=\"planningAudience\" rows=\"2\"&gt;&lt;/textarea&gt;\r\n      &lt;label&gt;難易度&lt;/label&gt;\r\n      &lt;select id=\"planningLevel\"&gt;\r\n        &lt;option value=\"\"&gt;—&lt;/option&gt;\r\n        &lt;option value=\"入門\"&gt;入門&lt;/option&gt;\r\n        &lt;option value=\"中階\"&gt;中階&lt;/option&gt;\r\n        &lt;option value=\"進階\"&gt;進階&lt;/option&gt;\r\n      &lt;/select&gt;\r\n      &lt;label&gt;說明（選填）&lt;/label&gt;\r\n      &lt;textarea id=\"planningDescription\" rows=\"3\"&gt;&lt;/textarea&gt;\r\n      &lt;div class=\"dialog-actions\"&gt;\r\n        &lt;button type=\"submit\" class=\"btn btn-primary\"&gt;儲存&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnCancelPlanning\"&gt;取消&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/form&gt;\r\n  &lt;/dialog&gt;\r\n\r\n  &lt;script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"&gt;&lt;/script&gt;\r\n  &lt;script src=\"script.js\"&gt;&lt;/script&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n",
+    "languageId": "html"
+  }
+}
+```
+Result:
+
+```json
+{
+  "diff": {
+    "chunks": [
+      {
+        "diffString": "        &lt;h3 id=\"planningFormTitle\"&gt;新增規劃中課程&lt;/h3&gt;\r\n        &lt;input type=\"hidden\" id=\"planningId\"&gt;\r\n-       &lt;label&gt;課程名稱&lt;/label&gt;\r\n+       &lt;label&gt;班名&lt;/label&gt;\r\n        &lt;input type=\"text\" id=\"planningTitle\" required&gt;\r\n+       &lt;label&gt;校區&lt;/label&gt;\r\n+       &lt;select id=\"planningCampus\" required&gt;\r\n+         &lt;option value=\"\"&gt;— 請選擇 —&lt;/option&gt;\r\n+         &lt;option value=\"院本部\"&gt;院本部&lt;/option&gt;\r\n+         &lt;option value=\"台中所\"&gt;台中所&lt;/option&gt;\r\n+         &lt;option value=\"高雄所\"&gt;高雄所&lt;/option&gt;\r\n+       &lt;/select&gt;\r\n+       &lt;label&gt;導師&lt;/label&gt;\r\n+       &lt;input type=\"text\" id=\"planningInstructor\"&gt;\r\n+       &lt;label&gt;開班日期&lt;/label&gt;\r\n+       &lt;input type=\"date\" id=\"planningStartDate\"&gt;\r\n+       &lt;label&gt;對象&lt;/label&gt;\r\n+       &lt;textarea id=\"planningAudience\" rows=\"2\"&gt;&lt;/textarea&gt;\r\n        &lt;label&gt;難易度&lt;/label&gt;\r\n        &lt;select id=\"planningLevel\"&gt;\r",
+        "oldStart": 97,
+        "newStart": 97,
+        "oldLines": 6,
+        "newLines": 19,
+        "linesRemoved": 1,
+        "linesAdded": 14
+      }
+    ],
+    "editor": "EDITOR_AI"
+  },
+  "shouldAutoFixLints": true,
+  "resultForModel": "Success. Updated the following files:\nM C:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\index.html",
+  "contentsAfterEdit": "&lt;!DOCTYPE html&gt;\r\n&lt;html lang=\"zh-TW\"&gt;\r\n&lt;head&gt;\r\n  &lt;meta charset=\"UTF-8\"&gt;\r\n  &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"&gt;\r\n  &lt;title&gt;Course Similarity Analyzer&lt;/title&gt;\r\n  &lt;link rel=\"stylesheet\" href=\"style.css\"&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n  &lt;div class=\"app\"&gt;\r\n    &lt;!-- 頂部導覽：紅框四功能 --&gt;\r\n    &lt;header class=\"nav\" role=\"navigation\" aria-label=\"主要功能\"&gt;\r\n      &lt;h1 class=\"title\"&gt;Course Similarity Analyzer (MVP)&lt;/h1&gt;\r\n      &lt;nav class=\"tabs\" id=\"mainTabs\"&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"sync\" data-admin-only&gt;① 同步爬取 TIS&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"planning\"&gt;② 登錄規劃中課程&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"similarity\"&gt;③ 相似度查詢/建議&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"tab\" data-tab=\"browse\"&gt;④ 資料庫瀏覽&lt;/button&gt;\r\n      &lt;/nav&gt;\r\n      &lt;div class=\"auth-area\"&gt;\r\n        &lt;span class=\"user-info\" id=\"userInfo\"&gt;&lt;/span&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnLogin\"&gt;登入&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnLogout\" hidden&gt;登出&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/header&gt;\r\n\r\n    &lt;main class=\"content\"&gt;\r\n      &lt;!-- ① 同步爬取 TIS（僅管理員） --&gt;\r\n      &lt;section id=\"panel-sync\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;同步爬取 TIS&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;同步由後端排程執行 &lt;code&gt;sync_cli.py&lt;/code&gt;，請在管理員電腦設定每日排程。下方顯示最近一次同步紀錄。&lt;/p&gt;\r\n        &lt;div id=\"syncLog\" class=\"sync-log\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ② 登錄規劃中課程 --&gt;\r\n      &lt;section id=\"panel-planning\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;登錄規劃中課程&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;規劃中課程列表；管理員可新增/編輯/刪除，一般使用者僅可檢視。&lt;/p&gt;\r\n        &lt;div class=\"toolbar\" data-admin-only&gt;\r\n          &lt;button type=\"button\" class=\"btn btn-primary\" id=\"btnAddPlanning\"&gt;新增規劃中課程&lt;/button&gt;\r\n        &lt;/div&gt;\r\n        &lt;div id=\"planningList\" class=\"table-wrap\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ③ 相似度查詢/建議 --&gt;\r\n      &lt;section id=\"panel-similarity\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;相似度查詢/建議&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;輸入你打算開的課，系統會在：歷史開班 + 未來即將開班 + 規劃中課程中找出相似者。&lt;/p&gt;\r\n        &lt;div class=\"form\"&gt;\r\n          &lt;label&gt;你要開的班名&lt;/label&gt;\r\n          &lt;input type=\"text\" id=\"similarityQuery\" placeholder=\"例如：Copilot\"&gt;\r\n          &lt;label&gt;你要開的難易度&lt;/label&gt;\r\n          &lt;select id=\"similarityLevel\"&gt;\r\n            &lt;option value=\"\"&gt;— 請選擇 —&lt;/option&gt;\r\n            &lt;option value=\"入門\"&gt;入門&lt;/option&gt;\r\n            &lt;option value=\"中階\"&gt;中階&lt;/option&gt;\r\n            &lt;option value=\"進階\"&gt;進階&lt;/option&gt;\r\n          &lt;/select&gt;\r\n          &lt;label&gt;比較: 歷史開班 (今天往前 N 天)&lt;/label&gt;\r\n          &lt;input type=\"range\" id=\"daysBack\" min=\"0\" max=\"365\" value=\"100\"&gt;\r\n          &lt;span id=\"daysBackVal\"&gt;100&lt;/span&gt; 天\r\n          &lt;label&gt;比較: 未來即將開班 (今天往後 M 天)&lt;/label&gt;\r\n          &lt;input type=\"range\" id=\"daysForward\" min=\"0\" max=\"365\" value=\"100\"&gt;\r\n          &lt;span id=\"daysForwardVal\"&gt;100&lt;/span&gt; 天\r\n          &lt;button type=\"button\" class=\"btn btn-primary\" id=\"btnSearchSimilarity\"&gt;查詢相似課程&lt;/button&gt;\r\n        &lt;/div&gt;\r\n        &lt;div id=\"similarityResults\" class=\"results\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n\r\n      &lt;!-- ④ 資料庫瀏覽 --&gt;\r\n      &lt;section id=\"panel-browse\" class=\"panel\" hidden&gt;\r\n        &lt;h2&gt;資料庫瀏覽&lt;/h2&gt;\r\n        &lt;p class=\"desc\"&gt;檢視目前資料庫所有課程；管理員可編輯/刪除，一般使用者僅可檢視。&lt;/p&gt;\r\n        &lt;div id=\"browseTable\" class=\"table-wrap\"&gt;&lt;/div&gt;\r\n      &lt;/section&gt;\r\n    &lt;/main&gt;\r\n  &lt;/div&gt;\r\n\r\n  &lt;!-- 登入彈窗 --&gt;\r\n  &lt;dialog id=\"loginDialog\"&gt;\r\n    &lt;form method=\"dialog\"&gt;\r\n      &lt;h3&gt;登入&lt;/h3&gt;\r\n      &lt;label&gt;Email&lt;/label&gt;\r\n      &lt;input type=\"email\" id=\"loginEmail\" required&gt;\r\n      &lt;label&gt;密碼&lt;/label&gt;\r\n      &lt;input type=\"password\" id=\"loginPassword\" required&gt;\r\n      &lt;div class=\"dialog-actions\"&gt;\r\n        &lt;button type=\"submit\" class=\"btn btn-primary\"&gt;登入&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnCancelLogin\"&gt;取消&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/form&gt;\r\n  &lt;/dialog&gt;\r\n\r\n  &lt;!-- 新增/編輯規劃中課程彈窗 --&gt;\r\n  &lt;dialog id=\"planningFormDialog\"&gt;\r\n    &lt;form method=\"dialog\" id=\"planningForm\"&gt;\r\n      &lt;h3 id=\"planningFormTitle\"&gt;新增規劃中課程&lt;/h3&gt;\r\n      &lt;input type=\"hidden\" id=\"planningId\"&gt;\r\n      &lt;label&gt;班名&lt;/label&gt;\r\n      &lt;input type=\"text\" id=\"planningTitle\" required&gt;\r\n      &lt;label&gt;校區&lt;/label&gt;\r\n      &lt;select id=\"planningCampus\" required&gt;\r\n        &lt;option value=\"\"&gt;— 請選擇 —&lt;/option&gt;\r\n        &lt;option value=\"院本部\"&gt;院本部&lt;/option&gt;\r\n        &lt;option value=\"台中所\"&gt;台中所&lt;/option&gt;\r\n        &lt;option value=\"高雄所\"&gt;高雄所&lt;/option&gt;\r\n      &lt;/select&gt;\r\n      &lt;label&gt;導師&lt;/label&gt;\r\n      &lt;input type=\"text\" id=\"planningInstructor\"&gt;\r\n      &lt;label&gt;開班日期&lt;/label&gt;\r\n      &lt;input type=\"date\" id=\"planningStartDate\"&gt;\r\n      &lt;label&gt;對象&lt;/label&gt;\r\n      &lt;textarea id=\"planningAudience\" rows=\"2\"&gt;&lt;/textarea&gt;\r\n      &lt;label&gt;難易度&lt;/label&gt;\r\n      &lt;select id=\"planningLevel\"&gt;\r\n        &lt;option value=\"\"&gt;—&lt;/option&gt;\r\n        &lt;option value=\"入門\"&gt;入門&lt;/option&gt;\r\n        &lt;option value=\"中階\"&gt;中階&lt;/option&gt;\r\n        &lt;option value=\"進階\"&gt;進階&lt;/option&gt;\r\n      &lt;/select&gt;\r\n      &lt;label&gt;說明（選填）&lt;/label&gt;\r\n      &lt;textarea id=\"planningDescription\" rows=\"3\"&gt;&lt;/textarea&gt;\r\n      &lt;div class=\"dialog-actions\"&gt;\r\n        &lt;button type=\"submit\" class=\"btn btn-primary\"&gt;儲存&lt;/button&gt;\r\n        &lt;button type=\"button\" class=\"btn btn-ghost\" id=\"btnCancelPlanning\"&gt;取消&lt;/button&gt;\r\n      &lt;/div&gt;\r\n    &lt;/form&gt;\r\n  &lt;/dialog&gt;\r\n\r\n  &lt;script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"&gt;&lt;/script&gt;\r\n  &lt;script src=\"script.js\"&gt;&lt;/script&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n"
+}
+```
+User decision: **accepted**
+
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="apply_patch">
+<details>
+<summary>Tool use: **apply_patch**</summary>
+
+
+Parameters:
+
+```json
+{
+  "relativeWorkspacePath": "C:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\script.js"
+}
+```
+Additional data:
+
+```json
+{
+  "codeblockId": "64195bad-371c-456e-aac6-0f0d525d5579",
+  "codeblock": {
+    "uri": {
+      "scheme": "file",
+      "authority": "",
+      "path": "/C:/Course_Similarity_Analyzer/course_similarity_analyzer_web/script.js",
+      "query": "",
+      "fragment": "",
+      "_formatted": "file:///c%3A/Course_Similarity_Analyzer/course_similarity_analyzer_web/script.js",
+      "_fsPath": "c:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\script.js"
+    },
+    "codeblockId": "64195bad-371c-456e-aac6-0f0d525d5579",
+    "codeBlockIdx": 0,
+    "content": "/**\r\n * Course Similarity Analyzer - 前端\r\n * ① 僅管理員 ②③④ 一般使用者可檢視；②④ 管理員可修改\r\n * 設定：Data/config.json（SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE_URL）\r\n */\r\n\r\n(function () {\r\n  \"use strict\";\r\n\r\n  let config = {\r\n    SUPABASE_URL: \"\",\r\n    SUPABASE_ANON_KEY: \"\",\r\n    API_BASE_URL: \"http://localhost:8000\",\r\n  };\r\n  let supabaseClient = null;\r\n  let userRole = null;\r\n\r\n  // ---------- 載入設定 ----------\r\n  async function loadConfig() {\r\n    try {\r\n      const r = await fetch(\"Data/config.json\");\r\n      const data = await r.json();\r\n      config = { ...config, ...data };\r\n    } catch (e) {\r\n      console.warn(\"無法載入 Data/config.json，使用預設\", e);\r\n    }\r\n    if (!config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {\r\n      console.error(\"請在 Data/config.json 設定 SUPABASE_URL 與 SUPABASE_ANON_KEY\");\r\n      return;\r\n    }\r\n    supabaseClient = window.supabase.createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY);\r\n  }\r\n\r\n  // ---------- 登入 / 角色 ----------\r\n  async function getProfile() {\r\n    const { data: { user } } = await supabaseClient.auth.getUser();\r\n    if (!user) return null;\r\n    const { data } = await supabaseClient.from(\"profiles\").select(\"role\").eq(\"id\", user.id).single();\r\n    return data ? data.role : \"user\";\r\n  }\r\n\r\n  async function refreshAuth() {\r\n    const { data: { session } } = await supabaseClient.auth.getSession();\r\n    const infoEl = document.getElementById(\"userInfo\");\r\n    const loginBtn = document.getElementById(\"btnLogin\");\r\n    const logoutBtn = document.getElementById(\"btnLogout\");\r\n    if (session) {\r\n      userRole = await getProfile();\r\n      infoEl.textContent = session.user.email + (userRole === \"admin\" ? \" (管理員)\" : \"\");\r\n      loginBtn.hidden = true;\r\n      logoutBtn.hidden = false;\r\n    } else {\r\n      userRole = null;\r\n      infoEl.textContent = \"\";\r\n      loginBtn.hidden = false;\r\n      logoutBtn.hidden = true;\r\n    }\r\n    applyRoleVisibility();\r\n  }\r\n\r\n  function isAdmin() {\r\n    return userRole === \"admin\";\r\n  }\r\n\r\n  /** 依角色隱藏「僅管理員」區塊 */\r\n  function applyRoleVisibility() {\r\n    document.querySelectorAll(\"[data-admin-only]\").forEach(function (el) {\r\n      if (isAdmin()) {\r\n        el.classList.remove(\"hidden-by-role\");\r\n      } else {\r\n        el.classList.add(\"hidden-by-role\");\r\n      }\r\n    });\r\n  }\r\n\r\n  // ---------- 分頁切換 ----------\r\n  function showPanel(panelId) {\r\n    document.querySelectorAll(\".panel\").forEach(function (p) {\r\n      p.hidden = true;\r\n    });\r\n    document.querySelectorAll(\".tab\").forEach(function (t) {\r\n      t.classList.remove(\"active\");\r\n    });\r\n    const panel = document.getElementById(\"panel-\" + panelId);\r\n    const tab = document.querySelector('.tab[data-tab=\"' + panelId + '\"]');\r\n    if (panel) panel.hidden = false;\r\n    if (tab) tab.classList.add(\"active\");\r\n    if (panelId === \"sync\") renderSyncLog();\r\n    if (panelId === \"planning\") renderPlanningList();\r\n    if (panelId === \"browse\") renderBrowseTable();\r\n  }\r\n\r\n  // ---------- ① 同步紀錄 ----------\r\n  async function renderSyncLog() {\r\n    const el = document.getElementById(\"syncLog\");\r\n    el.textContent = \"載入中…\";\r\n    const { data, error } = await supabaseClient.from(\"sync_log\").select(\"*\").order(\"run_at\", { ascending: false }).limit(5);\r\n    if (error) {\r\n      el.textContent = \"無法載入：\" + error.message;\r\n      return;\r\n    }\r\n    if (!data || data.length === 0) {\r\n      el.textContent = \"尚無同步紀錄。請在後端執行 sync_cli.py 並設定排程。\";\r\n      return;\r\n    }\r\n    el.innerHTML = data.map(function (row) {\r\n      return \"&lt;div&gt;&lt;strong&gt;\" + new Date(row.run_at).toLocaleString(\"zh-TW\") + \"&lt;/strong&gt; \" + (row.status || \"\") + \" \" + (row.message || \"\") + \" 寫入 \" + (row.courses_upserted || 0) + \" 筆&lt;/div&gt;\";\r\n    }).join(\"\");\r\n  }\r\n\r\n  // ---------- ② 規劃中課程 ----------\r\n  async function renderPlanningList() {\r\n    const el = document.getElementById(\"planningList\");\r\n    el.innerHTML = \"載入中…\";\r\n    const { data, error } = await supabaseClient\r\n      .from(\"courses\")\r\n      .select(\"id,title,campus,instructor,start_date,audience,level,updated_at\")\r\n      .eq(\"status\", \"planning\")\r\n      .order(\"updated_at\", { ascending: false });\r\n    if (error) {\r\n      el.innerHTML = \"&lt;p&gt;無法載入：\" + error.message + \"&lt;/p&gt;\";\r\n      return;\r\n    }\r\n    // 規劃中課程：顯示主要欄位（無班代號）\r\n    let html =\r\n      \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;班名&lt;/th&gt;&lt;th&gt;校區&lt;/th&gt;&lt;th&gt;導師&lt;/th&gt;&lt;th&gt;開班日期&lt;/th&gt;&lt;th&gt;對象&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;&lt;th&gt;更新時間&lt;/th&gt;\" +\r\n      (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") +\r\n      \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n    (data || []).forEach(function (row) {\r\n      html +=\r\n        \"&lt;tr&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.title || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.campus || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.instructor || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.start_date || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.audience || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.level || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        (row.updated_at ? new Date(row.updated_at).toLocaleString(\"zh-TW\") : \"\") +\r\n        \"&lt;/td&gt;\";\r\n      if (isAdmin()) {\r\n        html +=\r\n          '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-ghost btn-edit-planning\" data-id=\"' +\r\n          escapeHtml(row.id) +\r\n          '\"&gt;編輯&lt;/button&gt; &lt;button type=\"button\" class=\"btn btn-danger btn-delete-planning\" data-id=\"' +\r\n          escapeHtml(row.id) +\r\n          '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n      }\r\n      html += \"&lt;/tr&gt;\";\r\n    });\r\n    html += \"&lt;/tbody&gt;&lt;/table&gt;\";\r\n    el.innerHTML = html;\r\n    el.querySelectorAll(\".btn-edit-planning\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", function () { openPlanningForm(btn.getAttribute(\"data-id\")).catch(console.error); });\r\n    });\r\n    el.querySelectorAll(\".btn-delete-planning\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", function () { deletePlanning(btn.getAttribute(\"data-id\")); });\r\n    });\r\n  }\r\n\r\n  async function openPlanningForm(id) {\r\n    const dialog = document.getElementById(\"planningFormDialog\");\r\n    document.getElementById(\"planningFormTitle\").textContent = id ? \"編輯規劃中課程\" : \"新增規劃中課程\";\r\n    document.getElementById(\"planningId\").value = id || \"\";\r\n    document.getElementById(\"planningTitle\").value = \"\";\r\n    document.getElementById(\"planningCampus\").value = \"\";\r\n    document.getElementById(\"planningInstructor\").value = \"\";\r\n    document.getElementById(\"planningStartDate\").value = \"\";\r\n    document.getElementById(\"planningAudience\").value = \"\";\r\n    document.getElementById(\"planningLevel\").value = \"\";\r\n    document.getElementById(\"planningDescription\").value = \"\";\r\n    if (id) {\r\n      const { data: row } = await supabaseClient\r\n        .from(\"courses\")\r\n        .select(\"title,campus,instructor,start_date,audience,level,description\")\r\n        .eq(\"id\", id)\r\n        .single();\r\n      if (row) {\r\n        document.getElementById(\"planningTitle\").value = row.title || \"\";\r\n        document.getElementById(\"planningCampus\").value = row.campus || \"\";\r\n        document.getElementById(\"planningInstructor\").value = row.instructor || \"\";\r\n        document.getElementById(\"planningStartDate\").value = row.start_date || \"\";\r\n        document.getElementById(\"planningAudience\").value = row.audience || \"\";\r\n        document.getElementById(\"planningLevel\").value = row.level || \"\";\r\n        document.getElementById(\"planningDescription\").value = row.description || \"\";\r\n      }\r\n    }\r\n    dialog.showModal();\r\n  }\r\n\r\n  document.getElementById(\"planningForm\").addEventListener(\"submit\", async function (e) {\r\n    e.preventDefault();\r\n    const id = document.getElementById(\"planningId\").value.trim();\r\n    const title = document.getElementById(\"planningTitle\").value.trim();\r\n    const campus = document.getElementById(\"planningCampus\").value.trim();\r\n    const instructor = document.getElementById(\"planningInstructor\").value.trim();\r\n    const startDate = document.getElementById(\"planningStartDate\").value;\r\n    const audience = document.getElementById(\"planningAudience\").value.trim();\r\n    const level = document.getElementById(\"planningLevel\").value.trim();\r\n    const description = document.getElementById(\"planningDescription\").value.trim();\r\n    if (!title) return;\r\n    if (!campus) {\r\n      alert(\"請選擇校區\");\r\n      return;\r\n    }\r\n    const now = new Date().toISOString();\r\n    if (id) {\r\n      const { error } = await supabaseClient\r\n        .from(\"courses\")\r\n        .update({\r\n          title: title,\r\n          campus: campus || null,\r\n          instructor: instructor || null,\r\n          start_date: startDate || null,\r\n          audience: audience || null,\r\n          level: level || null,\r\n          description: description || null,\r\n          updated_at: now,\r\n        })\r\n        .eq(\"id\", id);\r\n      if (error) alert(\"更新失敗：\" + error.message);\r\n    } else {\r\n      const payload = {\r\n        id: \"manual:\" + Math.random().toString(36).slice(2),\r\n        source: \"manual\",\r\n        status: \"planning\",\r\n        title: title,\r\n        campus: campus || null,\r\n        instructor: instructor || null,\r\n        start_date: startDate || null,\r\n        audience: audience || null,\r\n        level: level || null,\r\n        description: description || null,\r\n        content_hash: \"manual-\" + now,\r\n        created_at: now,\r\n        updated_at: now,\r\n      };\r\n      const { error } = await supabaseClient.from(\"courses\").insert(payload);\r\n      if (error) alert(\"新增失敗：\" + error.message);\r\n    }\r\n    document.getElementById(\"planningFormDialog\").close();\r\n    renderPlanningList();\r\n  });\r\n\r\n  async function deletePlanning(id) {\r\n    if (!confirm(\"確定刪除此筆規劃中課程？\")) return;\r\n    const { error } = await supabaseClient.from(\"courses\").delete().eq(\"id\", id);\r\n    if (error) alert(\"刪除失敗：\" + error.message);\r\n    else renderPlanningList();\r\n  }\r\n\r\n  // ---------- ③ 相似度查詢 ----------\r\n  document.getElementById(\"btnSearchSimilarity\").addEventListener(\"click\", async function () {\r\n    const query = document.getElementById(\"similarityQuery\").value.trim();\r\n    const level = document.getElementById(\"similarityLevel\").value.trim();\r\n    const daysBack = parseInt(document.getElementById(\"daysBack\").value, 10);\r\n    const daysForward = parseInt(document.getElementById(\"daysForward\").value, 10);\r\n    const el = document.getElementById(\"similarityResults\");\r\n    el.innerHTML = \"查詢中…\";\r\n    try {\r\n      const r = await fetch(config.API_BASE_URL + \"/api/similarity\", {\r\n        method: \"POST\",\r\n        headers: { \"Content-Type\": \"application/json\" },\r\n        body: JSON.stringify({ query: query, level: level || null, n_days_back: daysBack, n_days_forward: daysForward, top_k: 10 }),\r\n      });\r\n      const data = await r.json();\r\n      if (!r.ok) {\r\n        el.innerHTML = \"&lt;p&gt;查詢失敗：\" + (data.detail || r.statusText) + \"&lt;/p&gt;\";\r\n        return;\r\n      }\r\n      const results = data.results || [];\r\n      if (results.length === 0) {\r\n        el.innerHTML = \"&lt;p&gt;無相似課程。&lt;/p&gt;\";\r\n        return;\r\n      }\r\n      el.innerHTML = results.map(function (row) {\r\n        return '&lt;div class=\"item\"&gt;' + escapeHtml(row.title || \"\") + \" &lt;span class='similarity'&gt;相似度 \" + (row.similarity != null ? (Math.round(row.similarity * 100) + \"%\") : \"-\") + \"&lt;/span&gt;\" + (row.start_date ? \" \" + row.start_date : \"\") + (row.level ? \" \" + row.level : \"\") + \"&lt;/div&gt;\";\r\n      }).join(\"\");\r\n    } catch (err) {\r\n      el.innerHTML = \"&lt;p&gt;無法連線至相似度 API（\" + config.API_BASE_URL + \"），請確認後端 api_server.py 已啟動。&lt;/p&gt;\";\r\n    }\r\n  });\r\n\r\n  document.getElementById(\"daysBack\").addEventListener(\"input\", function () {\r\n    document.getElementById(\"daysBackVal\").textContent = this.value;\r\n  });\r\n  document.getElementById(\"daysForward\").addEventListener(\"input\", function () {\r\n    document.getElementById(\"daysForwardVal\").textContent = this.value;\r\n  });\r\n\r\n  // ---------- ④ 資料庫瀏覽 ----------\r\n  async function renderBrowseTable() {\r\n    const el = document.getElementById(\"browseTable\");\r\n    el.innerHTML = \"載入中…\";\r\n    const { data, error } = await supabaseClient.from(\"courses\").select(\"id,class_code,title,campus,instructor,start_date,audience,level\").order(\"start_date\", { ascending: true });\r\n    if (error) {\r\n      el.innerHTML = \"&lt;p&gt;無法載入：\" + error.message + \"&lt;/p&gt;\";\r\n      return;\r\n    }\r\n    // 欄位順序：班代號、班名、校區、導師、開班日期、對象、難易度\r\n    let html = \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;班代號&lt;/th&gt;&lt;th&gt;班名&lt;/th&gt;&lt;th&gt;校區&lt;/th&gt;&lt;th&gt;導師&lt;/th&gt;&lt;th&gt;開班日期&lt;/th&gt;&lt;th&gt;對象&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;\" + (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") + \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n    (data || []).forEach(function (row) {\r\n      html += \"&lt;tr&gt;&lt;td&gt;\" + escapeHtml(row.class_code || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.title || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.campus || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.instructor || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.start_date || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.audience || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.level || \"\") + \"&lt;/td&gt;\";\r\n      if (isAdmin()) {\r\n        html += '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-danger btn-delete-course\" data-id=\"' + escapeHtml(row.id) + '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n      }\r\n      html += \"&lt;/tr&gt;\";\r\n    });\r\n    html += \"&lt;/tbody&gt;&lt;/table&gt;\";\r\n    el.innerHTML = html;\r\n    el.querySelectorAll(\".btn-delete-course\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", async function () {\r\n        if (!confirm(\"確定刪除此課程？\")) return;\r\n        const { error } = await supabaseClient.from(\"courses\").delete().eq(\"id\", btn.getAttribute(\"data-id\"));\r\n        if (error) alert(\"刪除失敗：\" + error.message);\r\n        else renderBrowseTable();\r\n      });\r\n    });\r\n  }\r\n\r\n  function escapeHtml(s) {\r\n    if (s == null) return \"\";\r\n    var div = document.createElement(\"div\");\r\n    div.textContent = s;\r\n    return div.innerHTML;\r\n  }\r\n\r\n  // ---------- 登入彈窗 ----------\r\n  document.getElementById(\"btnLogin\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"loginDialog\").showModal();\r\n  });\r\n  document.getElementById(\"btnCancelLogin\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"loginDialog\").close();\r\n  });\r\n  document.getElementById(\"loginDialog\").addEventListener(\"submit\", async function (e) {\r\n    e.preventDefault();\r\n    var email = document.getElementById(\"loginEmail\").value.trim();\r\n    var password = document.getElementById(\"loginPassword\").value;\r\n    var err = (await supabaseClient.auth.signInWithPassword({ email: email, password: password })).error;\r\n    if (err) alert(\"登入失敗：\" + err.message);\r\n    else {\r\n      document.getElementById(\"loginDialog\").close();\r\n      refreshAuth();\r\n    }\r\n  });\r\n  document.getElementById(\"btnLogout\").addEventListener(\"click\", async function () {\r\n    await supabaseClient.auth.signOut();\r\n    refreshAuth();\r\n    showPanel(\"similarity\");\r\n  });\r\n\r\n  // ---------- 新增規劃中課程按鈕 ----------\r\n  document.getElementById(\"btnAddPlanning\").addEventListener(\"click\", function () {\r\n    openPlanningForm(null);\r\n  });\r\n  document.getElementById(\"btnCancelPlanning\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"planningFormDialog\").close();\r\n  });\r\n\r\n  // ---------- 分頁按鈕 ----------\r\n  document.getElementById(\"mainTabs\").addEventListener(\"click\", function (e) {\r\n    var t = e.target.closest(\".tab\");\r\n    if (t &amp;&amp; t.dataset.tab) showPanel(t.dataset.tab);\r\n  });\r\n\r\n  // ---------- 啟動 ----------\r\n  (async function init() {\r\n    await loadConfig();\r\n    if (!supabaseClient) return;\r\n    await refreshAuth();\r\n    showPanel(\"similarity\");\r\n  })();\r\n})();\r\n",
+    "languageId": "javascript"
+  }
+}
+```
+Result:
+
+```json
+{
+  "diff": {
+    "chunks": [
+      {
+        "diffString": "      const el = document.getElementById(\"planningList\");\r\n      el.innerHTML = \"載入中…\";\r\n-     const { data, error } = await supabaseClient.from(\"courses\").select(\"id,title,level,description,updated_at\").eq(\"status\", \"planning\").order(\"updated_at\", { ascending: false });\r\n+     const { data, error } = await supabaseClient\r\n+       .from(\"courses\")\r\n+       .select(\"id,title,campus,instructor,start_date,audience,level,updated_at\")\r\n+       .eq(\"status\", \"planning\")\r\n+       .order(\"updated_at\", { ascending: false });\r\n      if (error) {\r\n        el.innerHTML = \"&lt;p&gt;無法載入：\" + error.message + \"&lt;/p&gt;\";\r\n        return;\r\n      }\r\n-     let html = \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;課程名稱&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;&lt;th&gt;更新時間&lt;/th&gt;\" + (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") + \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n+     // 規劃中課程：顯示主要欄位（無班代號）\r\n+     let html =\r\n+       \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;班名&lt;/th&gt;&lt;th&gt;校區&lt;/th&gt;&lt;th&gt;導師&lt;/th&gt;&lt;th&gt;開班日期&lt;/th&gt;&lt;th&gt;對象&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;&lt;th&gt;更新時間&lt;/th&gt;\" +\r\n+       (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") +\r\n+       \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n      (data || []).forEach(function (row) {\r\n-       html += \"&lt;tr&gt;&lt;td&gt;\" + escapeHtml(row.title || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.level || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + (row.updated_at ? new Date(row.updated_at).toLocaleString(\"zh-TW\") : \"\") + \"&lt;/td&gt;\";\r\n+       html +=\r\n+         \"&lt;tr&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.title || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.campus || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.instructor || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.start_date || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.audience || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         escapeHtml(row.level || \"\") +\r\n+         \"&lt;/td&gt;&lt;td&gt;\" +\r\n+         (row.updated_at ? new Date(row.updated_at).toLocaleString(\"zh-TW\") : \"\") +\r\n+         \"&lt;/td&gt;\";\r\n        if (isAdmin()) {\r\n-         html += '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-ghost btn-edit-planning\" data-id=\"' + escapeHtml(row.id) + '\"&gt;編輯&lt;/button&gt; &lt;button type=\"button\" class=\"btn btn-danger btn-delete-planning\" data-id=\"' + escapeHtml(row.id) + '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n+         html +=\r\n+           '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-ghost btn-edit-planning\" data-id=\"' +\r\n+           escapeHtml(row.id) +\r\n+           '\"&gt;編輯&lt;/button&gt; &lt;button type=\"button\" class=\"btn btn-danger btn-delete-planning\" data-id=\"' +\r\n+           escapeHtml(row.id) +\r\n+           '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n        }\r\n        html += \"&lt;/tr&gt;\";\r",
+        "oldStart": 113,
+        "newStart": 113,
+        "oldLines": 14,
+        "newLines": 42,
+        "linesRemoved": 4,
+        "linesAdded": 32
+      },
+      {
+        "diffString": "      document.getElementById(\"planningId\").value = id || \"\";\r\n      document.getElementById(\"planningTitle\").value = \"\";\r\n+     document.getElementById(\"planningCampus\").value = \"\";\r\n+     document.getElementById(\"planningInstructor\").value = \"\";\r\n+     document.getElementById(\"planningStartDate\").value = \"\";\r\n+     document.getElementById(\"planningAudience\").value = \"\";\r\n      document.getElementById(\"planningLevel\").value = \"\";\r\n      document.getElementById(\"planningDescription\").value = \"\";\r\n      if (id) {\r\n-       const { data: row } = await supabaseClient.from(\"courses\").select(\"title,level,description\").eq(\"id\", id).single();\r\n+       const { data: row } = await supabaseClient\r\n+         .from(\"courses\")\r\n+         .select(\"title,campus,instructor,start_date,audience,level,description\")\r\n+         .eq(\"id\", id)\r\n+         .single();\r\n        if (row) {\r\n          document.getElementById(\"planningTitle\").value = row.title || \"\";\r\n+         document.getElementById(\"planningCampus\").value = row.campus || \"\";\r\n+         document.getElementById(\"planningInstructor\").value = row.instructor || \"\";\r\n+         document.getElementById(\"planningStartDate\").value = row.start_date || \"\";\r\n+         document.getElementById(\"planningAudience\").value = row.audience || \"\";\r\n          document.getElementById(\"planningLevel\").value = row.level || \"\";\r\n          document.getElementById(\"planningDescription\").value = row.description || \"\";\r",
+        "oldStart": 141,
+        "newStart": 169,
+        "oldLines": 10,
+        "newLines": 22,
+        "linesRemoved": 1,
+        "linesAdded": 13
+      },
+      {
+        "diffString": "      const id = document.getElementById(\"planningId\").value.trim();\r\n      const title = document.getElementById(\"planningTitle\").value.trim();\r\n+     const campus = document.getElementById(\"planningCampus\").value.trim();\r\n+     const instructor = document.getElementById(\"planningInstructor\").value.trim();\r\n+     const startDate = document.getElementById(\"planningStartDate\").value;\r\n+     const audience = document.getElementById(\"planningAudience\").value.trim();\r\n      const level = document.getElementById(\"planningLevel\").value.trim();\r\n      const description = document.getElementById(\"planningDescription\").value.trim();\r\n      if (!title) return;\r\n+     if (!campus) {\r\n+       alert(\"請選擇校區\");\r\n+       return;\r\n+     }\r\n      const now = new Date().toISOString();\r\n      if (id) {\r\n-       const { error } = await supabaseClient.from(\"courses\").update({ title: title, level: level || null, description: description || null, updated_at: now }).eq(\"id\", id);\r\n+       const { error } = await supabaseClient\r\n+         .from(\"courses\")\r\n+         .update({\r\n+           title: title,\r\n+           campus: campus || null,\r\n+           instructor: instructor || null,\r\n+           start_date: startDate || null,\r\n+           audience: audience || null,\r\n+           level: level || null,\r\n+           description: description || null,\r\n+           updated_at: now,\r\n+         })\r\n+         .eq(\"id\", id);\r\n        if (error) alert(\"更新失敗：\" + error.message);\r\n      } else {\r",
+        "oldStart": 158,
+        "newStart": 198,
+        "oldLines": 10,
+        "newLines": 30,
+        "linesRemoved": 1,
+        "linesAdded": 21
+      },
+      {
+        "diffString": "          status: \"planning\",\r\n          title: title,\r\n+         campus: campus || null,\r\n+         instructor: instructor || null,\r\n+         start_date: startDate || null,\r\n+         audience: audience || null,\r\n          level: level || null,\r\n          description: description || null,\r",
+        "oldStart": 171,
+        "newStart": 231,
+        "oldLines": 4,
+        "newLines": 8,
+        "linesAdded": 4
+      }
+    ],
+    "editor": "EDITOR_AI"
+  },
+  "shouldAutoFixLints": true,
+  "resultForModel": "Success. Updated the following files:\nM C:\\Course_Similarity_Analyzer\\course_similarity_analyzer_web\\script.js",
+  "contentsAfterEdit": "/**\r\n * Course Similarity Analyzer - 前端\r\n * ① 僅管理員 ②③④ 一般使用者可檢視；②④ 管理員可修改\r\n * 設定：Data/config.json（SUPABASE_URL, SUPABASE_ANON_KEY, API_BASE_URL）\r\n */\r\n\r\n(function () {\r\n  \"use strict\";\r\n\r\n  let config = {\r\n    SUPABASE_URL: \"\",\r\n    SUPABASE_ANON_KEY: \"\",\r\n    API_BASE_URL: \"http://localhost:8000\",\r\n  };\r\n  let supabaseClient = null;\r\n  let userRole = null;\r\n\r\n  // ---------- 載入設定 ----------\r\n  async function loadConfig() {\r\n    try {\r\n      const r = await fetch(\"Data/config.json\");\r\n      const data = await r.json();\r\n      config = { ...config, ...data };\r\n    } catch (e) {\r\n      console.warn(\"無法載入 Data/config.json，使用預設\", e);\r\n    }\r\n    if (!config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {\r\n      console.error(\"請在 Data/config.json 設定 SUPABASE_URL 與 SUPABASE_ANON_KEY\");\r\n      return;\r\n    }\r\n    supabaseClient = window.supabase.createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY);\r\n  }\r\n\r\n  // ---------- 登入 / 角色 ----------\r\n  async function getProfile() {\r\n    const { data: { user } } = await supabaseClient.auth.getUser();\r\n    if (!user) return null;\r\n    const { data } = await supabaseClient.from(\"profiles\").select(\"role\").eq(\"id\", user.id).single();\r\n    return data ? data.role : \"user\";\r\n  }\r\n\r\n  async function refreshAuth() {\r\n    const { data: { session } } = await supabaseClient.auth.getSession();\r\n    const infoEl = document.getElementById(\"userInfo\");\r\n    const loginBtn = document.getElementById(\"btnLogin\");\r\n    const logoutBtn = document.getElementById(\"btnLogout\");\r\n    if (session) {\r\n      userRole = await getProfile();\r\n      infoEl.textContent = session.user.email + (userRole === \"admin\" ? \" (管理員)\" : \"\");\r\n      loginBtn.hidden = true;\r\n      logoutBtn.hidden = false;\r\n    } else {\r\n      userRole = null;\r\n      infoEl.textContent = \"\";\r\n      loginBtn.hidden = false;\r\n      logoutBtn.hidden = true;\r\n    }\r\n    applyRoleVisibility();\r\n  }\r\n\r\n  function isAdmin() {\r\n    return userRole === \"admin\";\r\n  }\r\n\r\n  /** 依角色隱藏「僅管理員」區塊 */\r\n  function applyRoleVisibility() {\r\n    document.querySelectorAll(\"[data-admin-only]\").forEach(function (el) {\r\n      if (isAdmin()) {\r\n        el.classList.remove(\"hidden-by-role\");\r\n      } else {\r\n        el.classList.add(\"hidden-by-role\");\r\n      }\r\n    });\r\n  }\r\n\r\n  // ---------- 分頁切換 ----------\r\n  function showPanel(panelId) {\r\n    document.querySelectorAll(\".panel\").forEach(function (p) {\r\n      p.hidden = true;\r\n    });\r\n    document.querySelectorAll(\".tab\").forEach(function (t) {\r\n      t.classList.remove(\"active\");\r\n    });\r\n    const panel = document.getElementById(\"panel-\" + panelId);\r\n    const tab = document.querySelector('.tab[data-tab=\"' + panelId + '\"]');\r\n    if (panel) panel.hidden = false;\r\n    if (tab) tab.classList.add(\"active\");\r\n    if (panelId === \"sync\") renderSyncLog();\r\n    if (panelId === \"planning\") renderPlanningList();\r\n    if (panelId === \"browse\") renderBrowseTable();\r\n  }\r\n\r\n  // ---------- ① 同步紀錄 ----------\r\n  async function renderSyncLog() {\r\n    const el = document.getElementById(\"syncLog\");\r\n    el.textContent = \"載入中…\";\r\n    const { data, error } = await supabaseClient.from(\"sync_log\").select(\"*\").order(\"run_at\", { ascending: false }).limit(5);\r\n    if (error) {\r\n      el.textContent = \"無法載入：\" + error.message;\r\n      return;\r\n    }\r\n    if (!data || data.length === 0) {\r\n      el.textContent = \"尚無同步紀錄。請在後端執行 sync_cli.py 並設定排程。\";\r\n      return;\r\n    }\r\n    el.innerHTML = data.map(function (row) {\r\n      return \"&lt;div&gt;&lt;strong&gt;\" + new Date(row.run_at).toLocaleString(\"zh-TW\") + \"&lt;/strong&gt; \" + (row.status || \"\") + \" \" + (row.message || \"\") + \" 寫入 \" + (row.courses_upserted || 0) + \" 筆&lt;/div&gt;\";\r\n    }).join(\"\");\r\n  }\r\n\r\n  // ---------- ② 規劃中課程 ----------\r\n  async function renderPlanningList() {\r\n    const el = document.getElementById(\"planningList\");\r\n    el.innerHTML = \"載入中…\";\r\n    const { data, error } = await supabaseClient\r\n      .from(\"courses\")\r\n      .select(\"id,title,campus,instructor,start_date,audience,level,updated_at\")\r\n      .eq(\"status\", \"planning\")\r\n      .order(\"updated_at\", { ascending: false });\r\n    if (error) {\r\n      el.innerHTML = \"&lt;p&gt;無法載入：\" + error.message + \"&lt;/p&gt;\";\r\n      return;\r\n    }\r\n    // 規劃中課程：顯示主要欄位（無班代號）\r\n    let html =\r\n      \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;班名&lt;/th&gt;&lt;th&gt;校區&lt;/th&gt;&lt;th&gt;導師&lt;/th&gt;&lt;th&gt;開班日期&lt;/th&gt;&lt;th&gt;對象&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;&lt;th&gt;更新時間&lt;/th&gt;\" +\r\n      (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") +\r\n      \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n    (data || []).forEach(function (row) {\r\n      html +=\r\n        \"&lt;tr&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.title || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.campus || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.instructor || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.start_date || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.audience || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        escapeHtml(row.level || \"\") +\r\n        \"&lt;/td&gt;&lt;td&gt;\" +\r\n        (row.updated_at ? new Date(row.updated_at).toLocaleString(\"zh-TW\") : \"\") +\r\n        \"&lt;/td&gt;\";\r\n      if (isAdmin()) {\r\n        html +=\r\n          '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-ghost btn-edit-planning\" data-id=\"' +\r\n          escapeHtml(row.id) +\r\n          '\"&gt;編輯&lt;/button&gt; &lt;button type=\"button\" class=\"btn btn-danger btn-delete-planning\" data-id=\"' +\r\n          escapeHtml(row.id) +\r\n          '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n      }\r\n      html += \"&lt;/tr&gt;\";\r\n    });\r\n    html += \"&lt;/tbody&gt;&lt;/table&gt;\";\r\n    el.innerHTML = html;\r\n    el.querySelectorAll(\".btn-edit-planning\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", function () { openPlanningForm(btn.getAttribute(\"data-id\")).catch(console.error); });\r\n    });\r\n    el.querySelectorAll(\".btn-delete-planning\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", function () { deletePlanning(btn.getAttribute(\"data-id\")); });\r\n    });\r\n  }\r\n\r\n  async function openPlanningForm(id) {\r\n    const dialog = document.getElementById(\"planningFormDialog\");\r\n    document.getElementById(\"planningFormTitle\").textContent = id ? \"編輯規劃中課程\" : \"新增規劃中課程\";\r\n    document.getElementById(\"planningId\").value = id || \"\";\r\n    document.getElementById(\"planningTitle\").value = \"\";\r\n    document.getElementById(\"planningCampus\").value = \"\";\r\n    document.getElementById(\"planningInstructor\").value = \"\";\r\n    document.getElementById(\"planningStartDate\").value = \"\";\r\n    document.getElementById(\"planningAudience\").value = \"\";\r\n    document.getElementById(\"planningLevel\").value = \"\";\r\n    document.getElementById(\"planningDescription\").value = \"\";\r\n    if (id) {\r\n      const { data: row } = await supabaseClient\r\n        .from(\"courses\")\r\n        .select(\"title,campus,instructor,start_date,audience,level,description\")\r\n        .eq(\"id\", id)\r\n        .single();\r\n      if (row) {\r\n        document.getElementById(\"planningTitle\").value = row.title || \"\";\r\n        document.getElementById(\"planningCampus\").value = row.campus || \"\";\r\n        document.getElementById(\"planningInstructor\").value = row.instructor || \"\";\r\n        document.getElementById(\"planningStartDate\").value = row.start_date || \"\";\r\n        document.getElementById(\"planningAudience\").value = row.audience || \"\";\r\n        document.getElementById(\"planningLevel\").value = row.level || \"\";\r\n        document.getElementById(\"planningDescription\").value = row.description || \"\";\r\n      }\r\n    }\r\n    dialog.showModal();\r\n  }\r\n\r\n  document.getElementById(\"planningForm\").addEventListener(\"submit\", async function (e) {\r\n    e.preventDefault();\r\n    const id = document.getElementById(\"planningId\").value.trim();\r\n    const title = document.getElementById(\"planningTitle\").value.trim();\r\n    const campus = document.getElementById(\"planningCampus\").value.trim();\r\n    const instructor = document.getElementById(\"planningInstructor\").value.trim();\r\n    const startDate = document.getElementById(\"planningStartDate\").value;\r\n    const audience = document.getElementById(\"planningAudience\").value.trim();\r\n    const level = document.getElementById(\"planningLevel\").value.trim();\r\n    const description = document.getElementById(\"planningDescription\").value.trim();\r\n    if (!title) return;\r\n    if (!campus) {\r\n      alert(\"請選擇校區\");\r\n      return;\r\n    }\r\n    const now = new Date().toISOString();\r\n    if (id) {\r\n      const { error } = await supabaseClient\r\n        .from(\"courses\")\r\n        .update({\r\n          title: title,\r\n          campus: campus || null,\r\n          instructor: instructor || null,\r\n          start_date: startDate || null,\r\n          audience: audience || null,\r\n          level: level || null,\r\n          description: description || null,\r\n          updated_at: now,\r\n        })\r\n        .eq(\"id\", id);\r\n      if (error) alert(\"更新失敗：\" + error.message);\r\n    } else {\r\n      const payload = {\r\n        id: \"manual:\" + Math.random().toString(36).slice(2),\r\n        source: \"manual\",\r\n        status: \"planning\",\r\n        title: title,\r\n        campus: campus || null,\r\n        instructor: instructor || null,\r\n        start_date: startDate || null,\r\n        audience: audience || null,\r\n        level: level || null,\r\n        description: description || null,\r\n        content_hash: \"manual-\" + now,\r\n        created_at: now,\r\n        updated_at: now,\r\n      };\r\n      const { error } = await supabaseClient.from(\"courses\").insert(payload);\r\n      if (error) alert(\"新增失敗：\" + error.message);\r\n    }\r\n    document.getElementById(\"planningFormDialog\").close();\r\n    renderPlanningList();\r\n  });\r\n\r\n  async function deletePlanning(id) {\r\n    if (!confirm(\"確定刪除此筆規劃中課程？\")) return;\r\n    const { error } = await supabaseClient.from(\"courses\").delete().eq(\"id\", id);\r\n    if (error) alert(\"刪除失敗：\" + error.message);\r\n    else renderPlanningList();\r\n  }\r\n\r\n  // ---------- ③ 相似度查詢 ----------\r\n  document.getElementById(\"btnSearchSimilarity\").addEventListener(\"click\", async function () {\r\n    const query = document.getElementById(\"similarityQuery\").value.trim();\r\n    const level = document.getElementById(\"similarityLevel\").value.trim();\r\n    const daysBack = parseInt(document.getElementById(\"daysBack\").value, 10);\r\n    const daysForward = parseInt(document.getElementById(\"daysForward\").value, 10);\r\n    const el = document.getElementById(\"similarityResults\");\r\n    el.innerHTML = \"查詢中…\";\r\n    try {\r\n      const r = await fetch(config.API_BASE_URL + \"/api/similarity\", {\r\n        method: \"POST\",\r\n        headers: { \"Content-Type\": \"application/json\" },\r\n        body: JSON.stringify({ query: query, level: level || null, n_days_back: daysBack, n_days_forward: daysForward, top_k: 10 }),\r\n      });\r\n      const data = await r.json();\r\n      if (!r.ok) {\r\n        el.innerHTML = \"&lt;p&gt;查詢失敗：\" + (data.detail || r.statusText) + \"&lt;/p&gt;\";\r\n        return;\r\n      }\r\n      const results = data.results || [];\r\n      if (results.length === 0) {\r\n        el.innerHTML = \"&lt;p&gt;無相似課程。&lt;/p&gt;\";\r\n        return;\r\n      }\r\n      el.innerHTML = results.map(function (row) {\r\n        return '&lt;div class=\"item\"&gt;' + escapeHtml(row.title || \"\") + \" &lt;span class='similarity'&gt;相似度 \" + (row.similarity != null ? (Math.round(row.similarity * 100) + \"%\") : \"-\") + \"&lt;/span&gt;\" + (row.start_date ? \" \" + row.start_date : \"\") + (row.level ? \" \" + row.level : \"\") + \"&lt;/div&gt;\";\r\n      }).join(\"\");\r\n    } catch (err) {\r\n      el.innerHTML = \"&lt;p&gt;無法連線至相似度 API（\" + config.API_BASE_URL + \"），請確認後端 api_server.py 已啟動。&lt;/p&gt;\";\r\n    }\r\n  });\r\n\r\n  document.getElementById(\"daysBack\").addEventListener(\"input\", function () {\r\n    document.getElementById(\"daysBackVal\").textContent = this.value;\r\n  });\r\n  document.getElementById(\"daysForward\").addEventListener(\"input\", function () {\r\n    document.getElementById(\"daysForwardVal\").textContent = this.value;\r\n  });\r\n\r\n  // ---------- ④ 資料庫瀏覽 ----------\r\n  async function renderBrowseTable() {\r\n    const el = document.getElementById(\"browseTable\");\r\n    el.innerHTML = \"載入中…\";\r\n    const { data, error } = await supabaseClient.from(\"courses\").select(\"id,class_code,title,campus,instructor,start_date,audience,level\").order(\"start_date\", { ascending: true });\r\n    if (error) {\r\n      el.innerHTML = \"&lt;p&gt;無法載入：\" + error.message + \"&lt;/p&gt;\";\r\n      return;\r\n    }\r\n    // 欄位順序：班代號、班名、校區、導師、開班日期、對象、難易度\r\n    let html = \"&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;班代號&lt;/th&gt;&lt;th&gt;班名&lt;/th&gt;&lt;th&gt;校區&lt;/th&gt;&lt;th&gt;導師&lt;/th&gt;&lt;th&gt;開班日期&lt;/th&gt;&lt;th&gt;對象&lt;/th&gt;&lt;th&gt;難易度&lt;/th&gt;\" + (isAdmin() ? \"&lt;th&gt;操作&lt;/th&gt;\" : \"\") + \"&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;\";\r\n    (data || []).forEach(function (row) {\r\n      html += \"&lt;tr&gt;&lt;td&gt;\" + escapeHtml(row.class_code || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.title || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.campus || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.instructor || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.start_date || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.audience || \"\") + \"&lt;/td&gt;&lt;td&gt;\" + escapeHtml(row.level || \"\") + \"&lt;/td&gt;\";\r\n      if (isAdmin()) {\r\n        html += '&lt;td&gt;&lt;button type=\"button\" class=\"btn btn-danger btn-delete-course\" data-id=\"' + escapeHtml(row.id) + '\"&gt;刪除&lt;/button&gt;&lt;/td&gt;';\r\n      }\r\n      html += \"&lt;/tr&gt;\";\r\n    });\r\n    html += \"&lt;/tbody&gt;&lt;/table&gt;\";\r\n    el.innerHTML = html;\r\n    el.querySelectorAll(\".btn-delete-course\").forEach(function (btn) {\r\n      btn.addEventListener(\"click\", async function () {\r\n        if (!confirm(\"確定刪除此課程？\")) return;\r\n        const { error } = await supabaseClient.from(\"courses\").delete().eq(\"id\", btn.getAttribute(\"data-id\"));\r\n        if (error) alert(\"刪除失敗：\" + error.message);\r\n        else renderBrowseTable();\r\n      });\r\n    });\r\n  }\r\n\r\n  function escapeHtml(s) {\r\n    if (s == null) return \"\";\r\n    var div = document.createElement(\"div\");\r\n    div.textContent = s;\r\n    return div.innerHTML;\r\n  }\r\n\r\n  // ---------- 登入彈窗 ----------\r\n  document.getElementById(\"btnLogin\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"loginDialog\").showModal();\r\n  });\r\n  document.getElementById(\"btnCancelLogin\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"loginDialog\").close();\r\n  });\r\n  document.getElementById(\"loginDialog\").addEventListener(\"submit\", async function (e) {\r\n    e.preventDefault();\r\n    var email = document.getElementById(\"loginEmail\").value.trim();\r\n    var password = document.getElementById(\"loginPassword\").value;\r\n    var err = (await supabaseClient.auth.signInWithPassword({ email: email, password: password })).error;\r\n    if (err) alert(\"登入失敗：\" + err.message);\r\n    else {\r\n      document.getElementById(\"loginDialog\").close();\r\n      refreshAuth();\r\n    }\r\n  });\r\n  document.getElementById(\"btnLogout\").addEventListener(\"click\", async function () {\r\n    await supabaseClient.auth.signOut();\r\n    refreshAuth();\r\n    showPanel(\"similarity\");\r\n  });\r\n\r\n  // ---------- 新增規劃中課程按鈕 ----------\r\n  document.getElementById(\"btnAddPlanning\").addEventListener(\"click\", function () {\r\n    openPlanningForm(null);\r\n  });\r\n  document.getElementById(\"btnCancelPlanning\").addEventListener(\"click\", function () {\r\n    document.getElementById(\"planningFormDialog\").close();\r\n  });\r\n\r\n  // ---------- 分頁按鈕 ----------\r\n  document.getElementById(\"mainTabs\").addEventListener(\"click\", function (e) {\r\n    var t = e.target.closest(\".tab\");\r\n    if (t &amp;&amp; t.dataset.tab) showPanel(t.dataset.tab);\r\n  });\r\n\r\n  // ---------- 啟動 ----------\r\n  (async function init() {\r\n    await loadConfig();\r\n    if (!supabaseClient) return;\r\n    await refreshAuth();\r\n    showPanel(\"similarity\");\r\n  })();\r\n})();\r\n"
+}
+```
+User decision: **accepted**
+
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="task" data-tool-name="todo_write">
+<details><summary>Tool use: **todo_write** • Todo List</summary>
+
+- [x] 擴充前端「規劃中課程」表單欄位：班名、校區(院本部/台中所/高雄所)、導師、開班日期、對象、難易度、說明
+- [x] 更新前端 script.js：新增/更新規劃中課程時寫入 courses 表對應欄位，status=planning
+
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+**Clarifying changes and instructions**
+
+I need to double-check that there are no syntax errors, particularly around line 218. From a JS perspective, it should be fine. The user prefers concise communication, so I’ll summarize what’s changed and what they need to do, like refreshing the browser. They might need the database to accept null values. I’ll explain that the new fields in the dialog map to the database, including campus, instructor, start date, audience, level, and description, while noting that class_code is no longer present. No extra tools are needed.</details></think>
+
+---
+
+### 已幫你改好的內容
+
+- **彈窗欄位（② 登錄規劃中課程）**  
+  現在「新增/編輯規劃中課程」對話框變成：
+
+  - **班名**：`planningTitle`（原本的「課程名稱」→ 已改成「班名」）
+  - **校區**：`planningCampus`（必填，下拉選單：院本部 / 台中所 / 高雄所）
+  - **導師**：`planningInstructor`
+  - **開班日期**：`planningStartDate`（`type="date"` 日期選擇器）
+  - **對象**：`planningAudience`
+  - **難易度**：`planningLevel`（入門 / 中階 / 進階）
+  - **說明（選填）**：`planningDescription`
+
+- **規劃中課程列表顯示**（② 的表格）
+  表格現在會顯示：
+
+  - **班名、校區、導師、開班日期、對象、難易度、更新時間**（管理員多一欄「操作」）
+
+- **寫入資料庫的欄位（`courses` 表，status = planning）**
+
+  - 新增 / 編輯時，會寫入：
+    - `title` ← 班名
+    - `campus` ← 校區
+    - `instructor` ← 導師
+    - `start_date` ← 開班日期（`YYYY-MM-DD`）
+    - `audience` ← 對象
+    - `level` ← 難易度
+    - `description` ← 說明
+    - `status` 固定為 `"planning"`
+    - `source` 固定為 `"manual"`
+    - `created_at / updated_at` 自動填現在時間  
+    - **不會填 `class_code`**（規劃中課程沒有班代號）
+
+### 你現在要做的事
+
+1. 在 VS Code 儲存 `index.html`、`script.js`。
+2. 重新整理瀏覽器頁面（F5）。
+3. 用管理員登入，切到「② 登錄規劃中課程」：
+   - 按「新增規劃中課程」，你會看到新的欄位。
+   - 填完班名、校區、導師、日期、對象、難易度、說明後按「儲存」。
+4. 儲存後，列表應該就會顯示你剛填的這些欄位；在 Supabase 的 `courses` 表裡，也可以看到這些欄位都不再是空白。
+
+如果你希望規劃中的課也在「③ 相似度查詢」裡被考慮，我可以再幫你調整後端或 SQL 把 `status='planning'` 的資料一起納入。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+沒錯，我希望規劃中的班也在「③ 相似度查詢」裡被考慮，必須要同時考慮歷史開班、規劃中的班、未來開班。
+
+並且我還希望可以讓使用者在比對相似度時，可以選擇相似度的最小顯示門檻以及只顯示Top K，例如：他可以選擇相似度只要超過60%一律顯示，這樣就可以避免一次看到太多課程了，目前好像有相似度，不論多少相似度都顯示。希望讓使用者可以選擇只看相似度前10名或是前K名的班。
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+
+
+---
+
+
+檢查後端 API 與資料庫函數，以支援規劃中課程並加入相似度門檻與 Top K 過濾：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/api_server.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/migrations/001_initial.sql</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+修改資料庫函數、後端 API 與前端 UI，支援規劃中課程並加入相似度門檻與 Top K 過濾：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/index.html</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="task" data-tool-name="todo_write">
+<details><summary>Tool use: **todo_write** • Todo List</summary>
+
+- [-] 修改資料庫 match_courses 函數：包含 status=planning 的課程
+- [ ] 後端 API 增加 min_similarity 參數並過濾結果
+- [ ] 前端 UI 增加最小相似度門檻和 Top K 控制項
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+修改資料庫函數、後端 API 與前端 UI，支援規劃中課程並加入相似度門檻與 Top K 過濾：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="write">
+
+<details><summary>Tool use: **write** • Edit file: course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql</summary>
+
+**Chunk 1**
+Lines added: 39, lines removed: 1
+
+```diff
+@@ -1,1 +1,39 @@
+- 
++ -- 更新 match_courses 函數：包含規劃中課程（status='planning'）
++ -- 規劃中課程可能沒有 start_date，需要特別處理
++ 
++ CREATE OR REPLACE FUNCTION public.match_courses(
++     query_embedding extensions.vector(384),
++     start_from TEXT,
++     start_to TEXT,
++     match_count INT DEFAULT 10
++ )
++ RETURNS TABLE (
++     id TEXT,
++     title TEXT,
++     start_date TEXT,
++     level TEXT,
++     similarity FLOAT
++ )
++ LANGUAGE sql STABLE
++ AS $$
++     SELECT
++         c.id,
++         c.title,
++         c.start_date,
++         c.level,
++         1 - (c.embedding &lt;=&gt; query_embedding) AS similarity
++     FROM public.courses c
++     WHERE c.embedding IS NOT NULL
++       AND (
++           -- 已確定開班的課程：檢查日期範圍
++           (c.status != 'planning' AND 
++            (start_from IS NULL OR c.start_date &gt;= start_from) AND
++            (start_to IS NULL OR c.start_date &lt;= start_to))
++           OR
++           -- 規劃中的課程：不限制日期，全部納入
++           (c.status = 'planning')
++       )
++     ORDER BY c.embedding &lt;=&gt; query_embedding
++     LIMIT match_count;
++ $$;
++ 
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/api_server.py</summary>
+
+**Chunk 1**
+Lines added: 1, lines removed: undefined
+
+```diff
+@@ -42,4 +42,5 @@
+      n_days_forward: int = 100
+      top_k: int = 10
++     min_similarity: float = 0.0  # 最小相似度門檻（0.0-1.0，例如 0.6 表示 60%）
+  
+  
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/api_server.py</summary>
+
+**Chunk 1**
+Lines added: 1, lines removed: undefined
+
+```diff
+@@ -90,4 +90,5 @@
+  
+      try:
++         # 先查詢較多筆（最多 100 筆），以便後續過濾
+          r = sb.rpc(
+              "match_courses",
+```
+
+**Chunk 2**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -96,5 +97,5 @@
+                  "start_from": start_from,
+                  "start_to": start_to,
+-                 "match_count": min(req.top_k, 50),
++                 "match_count": min(req.top_k * 2, 100),  # 查詢更多筆，以便過濾後仍有足夠結果
+              },
+          ).execute()
+```
+
+**Chunk 3**
+Lines added: 5, lines removed: undefined
+
+```diff
+@@ -104,8 +105,13 @@
+          raise HTTPException(status_code=500, detail=f"查詢失敗: {e}")
+  
++     # 過濾：最小相似度門檻
++     if req.min_similarity &gt; 0:
++         rows = [x for x in rows if (x.get("similarity") or 0.0) &gt;= req.min_similarity]
++ 
+      # 可選：依 level 過濾
+      if req.level and req.level.strip():
+          rows = [x for x in rows if (x.get("level") or "").strip() == req.level.strip()]
+  
++     # 只取前 top_k 筆
+      return {"results": rows[: req.top_k]}
+  
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_web/index.html</summary>
+
+**Chunk 1**
+Lines added: 5, lines removed: undefined
+
+```diff
+@@ -63,4 +63,9 @@
+            &lt;input type="range" id="daysForward" min="0" max="365" value="100"&gt;
+            &lt;span id="daysForwardVal"&gt;100&lt;/span&gt; 天
++           &lt;label&gt;最小相似度門檻&lt;/label&gt;
++           &lt;input type="range" id="minSimilarity" min="0" max="100" value="0"&gt;
++           &lt;span id="minSimilarityVal"&gt;0&lt;/span&gt;%
++           &lt;label&gt;顯示前 K 名&lt;/label&gt;
++           &lt;input type="number" id="topK" min="1" max="50" value="10"&gt;
+            &lt;button type="button" class="btn btn-primary" id="btnSearchSimilarity"&gt;查詢相似課程&lt;/button&gt;
+          &lt;/div&gt;
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_web/script.js</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: undefined
+
+```diff
+@@ -261,4 +261,6 @@
+      const daysBack = parseInt(document.getElementById("daysBack").value, 10);
+      const daysForward = parseInt(document.getElementById("daysForward").value, 10);
++     const minSimilarity = parseFloat(document.getElementById("minSimilarity").value) / 100; // 轉換為 0-1 範圍
++     const topK = parseInt(document.getElementById("topK").value, 10) || 10;
+      const el = document.getElementById("similarityResults");
+      el.innerHTML = "查詢中…";
+```
+
+**Chunk 2**
+Lines added: 8, lines removed: 1
+
+```diff
+@@ -267,5 +269,12 @@
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+-         body: JSON.stringify({ query: query, level: level || null, n_days_back: daysBack, n_days_forward: daysForward, top_k: 10 }),
++         body: JSON.stringify({
++           query: query,
++           level: level || null,
++           n_days_back: daysBack,
++           n_days_forward: daysForward,
++           top_k: topK,
++           min_similarity: minSimilarity,
++         }),
+        });
+        const data = await r.json();
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_web/script.js</summary>
+
+**Chunk 1**
+Lines added: 3, lines removed: undefined
+
+```diff
+@@ -302,4 +302,7 @@
+      document.getElementById("daysForwardVal").textContent = this.value;
+    });
++   document.getElementById("minSimilarity").addEventListener("input", function () {
++     document.getElementById("minSimilarityVal").textContent = this.value;
++   });
+  
+    // ---------- ④ 資料庫瀏覽 ----------
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="task" data-tool-name="todo_write">
+<details><summary>Tool use: **todo_write** • Todo List</summary>
+
+- [x] 修改資料庫 match_courses 函數：包含 status=planning 的課程
+- [x] 後端 API 增加 min_similarity 參數並過濾結果
+- [x] 前端 UI 增加最小相似度門檻和 Top K 控制項
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+檢查規劃中課程是否會生成 embedding，並確認前端顯示邏輯：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/supabase_db.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="search" data-tool-name="codebase_search">
+<details>
+                <summary>Tool use: **codebase_search** • Searched codebase "How are embeddings generated for planning courses? Does sync_cli generate embeddings for status=planning courses?" • **15** results</summary>
+            
+| File | Lines |
+|------|-------|
+| `course_similarity_analyzer_backend/sync_cli.py` | L32-135 |
+| `course_similarity_analyzer_backend/migrations/001_initial.sql` | L60 |
+| `course_similarity_analyzer_backend/sync_cli.py` | L21-131 |
+| `course_similarity_analyzer_backend/api_server.py` | L58-115 |
+| `course_similarity_analyzer_backend/supabase_db.py` | L92-115 |
+| `course_similarity_analyzer_backend/supabase_db.py` | L13-84 |
+| `course_similarity_analyzer_backend/sync_cli.py` | L131 |
+| `course_similarity_analyzer_backend/config.py` | L46 |
+| `course_similarity_analyzer_backend/README.md` | L59 |
+| `course_similarity_analyzer_backend/migrations/001_initial.sql` | L122-191 |
+| `course_similarity_analyzer_backend/api_server.py` | L43 |
+| `course_similarity_analyzer_backend/supabase_db.py` | L19-89 |
+| `course_similarity_analyzer_backend/api_server.py` | L37-55 |
+| `course_similarity_analyzer_backend/utils.py` | L20-45 |
+| `course_similarity_analyzer_backend/supabase_db.py` | L50 |
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+規劃中課程需要 embedding 才能出現在相似度查詢。建立 API 端點，讓前端在新增/更新規劃中課程時自動生成 embedding：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/api_server.py</summary>
+
+**Chunk 1**
+Lines added: 26, lines removed: undefined
+
+```diff
+@@ -116,4 +116,30 @@
+      return {"results": rows[: req.top_k]}
+  
++ 
++ @app.post("/api/generate-embedding")
++ def generate_embedding(course_data: dict):
++     """
++     為規劃中課程生成 embedding。
++     前端在新增/更新規劃中課程時，應呼叫此端點來生成 embedding。
++     """
++     title = course_data.get("title", "").strip()
++     description = course_data.get("description", "").strip()
++     audience = course_data.get("audience", "").strip()
++     
++     if not title:
++         raise HTTPException(status_code=400, detail="課程名稱（title）為必填")
++     
++     # 組合文字：標題 + 說明 + 對象
++     text = f"{title} {description} {audience}".strip()
++     
++     model = get_model()
++     try:
++         emb = model.encode(text, normalize_embeddings=True)
++         emb_list = emb.tolist()
++         return {"embedding": emb_list, "embedding_dim": len(emb_list)}
++     except Exception as e:
++         logger.exception("embedding 生成失敗")
++         raise HTTPException(status_code=500, detail=f"embedding 生成失敗: {e}")
++ 
+  
+  @app.get("/api/health")
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+修改前端，在新增/更新規劃中課程時自動生成 embedding：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_web/script.js</summary>
+
+**Chunk 1**
+Lines added: 40, lines removed: 13
+
+```diff
+@@ -210,18 +210,45 @@
+      }
+      const now = new Date().toISOString();
++     
++     // 先呼叫後端 API 生成 embedding
++     let embedding = null;
++     let embedding_dim = null;
++     try {
++       const embRes = await fetch(config.API_BASE_URL + "/api/generate-embedding", {
++         method: "POST",
++         headers: { "Content-Type": "application/json" },
++         body: JSON.stringify({
++           title: title,
++           description: description,
++           audience: audience,
++         }),
++       });
++       if (embRes.ok) {
++         const embData = await embRes.json();
++         embedding = embData.embedding;
++         embedding_dim = embData.embedding_dim;
++       } else {
++         console.warn("生成 embedding 失敗，但繼續儲存課程資料");
++       }
++     } catch (err) {
++       console.warn("無法連線至 embedding API，但繼續儲存課程資料", err);
++     }
++     
+      if (id) {
+-       const { error } = await supabaseClient
+-         .from("courses")
+-         .update({
+-           title: title,
+-           campus: campus || null,
+-           instructor: instructor || null,
+-           start_date: startDate || null,
+-           audience: audience || null,
+-           level: level || null,
+-           description: description || null,
+-           updated_at: now,
+-         })
+-         .eq("id", id);
++       const updateData = {
++         title: title,
++         campus: campus || null,
++         instructor: instructor || null,
++         start_date: startDate || null,
++         audience: audience || null,
++         level: level || null,
++         description: description || null,
++         updated_at: now,
++       };
++       if (embedding) {
++         updateData.embedding = embedding;
++         updateData.embedding_dim = embedding_dim;
++       }
++       const { error } = await supabaseClient.from("courses").update(updateData).eq("id", id);
+        if (error) alert("更新失敗：" + error.message);
+      } else {
+```
+
+**Chunk 2**
+Lines added: 4, lines removed: undefined
+
+```diff
+@@ -241,4 +268,8 @@
+          updated_at: now,
+        };
++       if (embedding) {
++         payload.embedding = embedding;
++         payload.embedding_dim = embedding_dim;
++       }
+        const { error } = await supabaseClient.from("courses").insert(payload);
+        if (error) alert("新增失敗：" + error.message);
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="read_lints">
+<details>
+          <summary>Tool use: **read_lints** • Read lints for 2 files</summary>
+      
+Lint paths:
+
+- `course_similarity_analyzer_backend/api_server.py`
+- `course_similarity_analyzer_web/script.js`
+
+Lint results
+
+
+**No lint errors found**
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+修正後端 API 的 embedding 生成端點，改用 Pydantic model：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/api_server.py</summary>
+
+**Chunk 1**
+Lines added: 6, lines removed: undefined
+
+```diff
+@@ -44,4 +44,10 @@
+      min_similarity: float = 0.0  # 最小相似度門檻（0.0-1.0，例如 0.6 表示 60%）
+  
++ 
++ class EmbeddingRequest(BaseModel):
++     title: str
++     description: str | None = None
++     audience: str | None = None
++ 
+  
+  # 啟動時載入模型與 Supabase（可改為 lazy load）
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/api_server.py</summary>
+
+**Chunk 1**
+Lines added: 4, lines removed: 4
+
+```diff
+@@ -124,12 +124,12 @@
+  
+  @app.post("/api/generate-embedding")
+- def generate_embedding(course_data: dict):
++ def generate_embedding(req: EmbeddingRequest):
+      """
+      為規劃中課程生成 embedding。
+      前端在新增/更新規劃中課程時，應呼叫此端點來生成 embedding。
+      """
+-     title = course_data.get("title", "").strip()
+-     description = course_data.get("description", "").strip()
+-     audience = course_data.get("audience", "").strip()
++     title = req.title.strip()
++     description = (req.description or "").strip()
++     audience = (req.audience or "").strip()
+      
+      if not title:
+```
+
+</details>
+
+</tool-use>
+
+---
+
+
+
+---
+
+
+檢查前端顯示邏輯，確保能正確顯示規劃中課程：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="read_lints">
+<details>
+          <summary>Tool use: **read_lints** • Read lints for 1 file</summary>
+      
+Lint paths:
+
+- `course_similarity_analyzer_backend/api_server.py`
+
+Lint results
+
+
+**No lint errors found**
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+檢查相似度結果顯示，並優化顯示內容：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+更新資料庫函數以回傳更多欄位，並優化前端顯示：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: undefined
+
+```diff
+@@ -13,4 +13,6 @@
+      start_date TEXT,
+      level TEXT,
++     status TEXT,
++     campus TEXT,
+      similarity FLOAT
+  )
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: undefined
+
+```diff
+@@ -24,4 +24,6 @@
+          c.start_date,
+          c.level,
++         c.status,
++         c.campus,
+          1 - (c.embedding &lt;=&gt; query_embedding) AS similarity
+      FROM public.courses c
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_web/script.js</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+優化前端顯示，加入狀態與校區資訊：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_web/script.js</summary>
+
+**Chunk 1**
+Lines added: 5, lines removed: 1
+
+```diff
+@@ -320,5 +320,9 @@
+        }
+        el.innerHTML = results.map(function (row) {
+-         return '&lt;div class="item"&gt;' + escapeHtml(row.title || "") + " &lt;span class='similarity'&gt;相似度 " + (row.similarity != null ? (Math.round(row.similarity * 100) + "%") : "-") + "&lt;/span&gt;" + (row.start_date ? " " + row.start_date : "") + (row.level ? " " + row.level : "") + "&lt;/div&gt;";
++         const statusLabel = row.status === "planning" ? " &lt;span style='color: #ff9800; font-weight: bold;'&gt;[規劃中]&lt;/span&gt;" : "";
++         const campusLabel = row.campus ? " &lt;span style='color: #666;'&gt;[" + escapeHtml(row.campus) + "]&lt;/span&gt;" : "";
++         const dateLabel = row.start_date ? " &lt;span style='color: #666;'&gt;" + escapeHtml(row.start_date) + "&lt;/span&gt;" : "";
++         const levelLabel = row.level ? " &lt;span style='color: #666;'&gt;" + escapeHtml(row.level) + "&lt;/span&gt;" : "";
++         return '&lt;div class="item"&gt;' + escapeHtml(row.title || "") + statusLabel + campusLabel + " &lt;span class='similarity'&gt;相似度 " + (row.similarity != null ? (Math.round(row.similarity * 100) + "%") : "-") + "&lt;/span&gt;" + dateLabel + levelLabel + "&lt;/div&gt;";
+        }).join("");
+      } catch (err) {
+```
+
+</details>
+
+</tool-use>
+
+---
+
+
+
+---
+
+
+## 已完成的修改
+
+### 1. 資料庫函數更新（`migrations/003_update_match_courses_for_planning.sql`）
+- 修改 `match_courses` 函數，包含 `status='planning'` 的課程
+- 規劃中課程不限制日期範圍，全部納入查詢
+- 回傳欄位新增 `status` 和 `campus`
+
+### 2. 後端 API 更新（`api_server.py`）
+- 新增 `min_similarity` 參數（0.0-1.0，例如 0.6 表示 60%）
+- 新增 `/api/generate-embedding` 端點，為規劃中課程生成 embedding
+- 查詢結果會先過濾低於門檻的相似度，再取前 K 名
+
+### 3. 前端 UI 更新（`index.html` 和 `script.js`）
+- 新增「最小相似度門檻」滑桿（0-100%）
+- 新增「顯示前 K 名」數字輸入框（預設 10）
+- 新增/更新規劃中課程時，自動呼叫後端 API 生成 embedding
+- 相似度結果顯示優化：標示「[規劃中]」、顯示校區、日期、難易度
+
+## 接下來需要做的事
+
+### 步驟 1：執行資料庫 Migration
+
+在 Supabase Dashboard 的 SQL Editor 執行：
+
+```sql
+-- 更新 match_courses 函數：包含規劃中課程（status='planning'）
+CREATE OR REPLACE FUNCTION public.match_courses(
+    query_embedding extensions.vector(384),
+    start_from TEXT,
+    start_to TEXT,
+    match_count INT DEFAULT 10
+)
+RETURNS TABLE (
+    id TEXT,
+    title TEXT,
+    start_date TEXT,
+    level TEXT,
+    status TEXT,
+    campus TEXT,
+    similarity FLOAT
+)
+LANGUAGE sql STABLE
+AS $$
+    SELECT
+        c.id,
+        c.title,
+        c.start_date,
+        c.level,
+        c.status,
+        c.campus,
+        1 - (c.embedding <=> query_embedding) AS similarity
+    FROM public.courses c
+    WHERE c.embedding IS NOT NULL
+      AND (
+          -- 已確定開班的課程：檢查日期範圍
+          (c.status != 'planning' AND 
+           (start_from IS NULL OR c.start_date >= start_from) AND
+           (start_to IS NULL OR c.start_date <= start_to))
+          OR
+          -- 規劃中的課程：不限制日期，全部納入
+          (c.status = 'planning')
+      )
+    ORDER BY c.embedding <=> query_embedding
+    LIMIT match_count;
+$$;
+```
+
+或直接執行檔案：
+- 開啟 `course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql`
+- 複製內容到 Supabase SQL Editor 執行
+
+### 步驟 2：重新啟動後端 API
+
+如果後端正在執行，請重新啟動以載入新的 API 端點：
+
+```bash
+cd C:\Course_Similarity_Analyzer\course_similarity_analyzer_backend
+python api_server.py
+```
+
+### 步驟 3：測試功能
+
+1. 重新整理前端頁面（F5）
+2. 測試「② 登錄規劃中課程」：
+   - 新增一筆規劃中課程
+   - 系統會自動生成 embedding
+3. 測試「③ 相似度查詢/建議」：
+   - 輸入關鍵字
+   - 調整「最小相似度門檻」（例如：60%）
+   - 調整「顯示前 K 名」（例如：10）
+   - 點擊「查詢相似課程」
+   - 應該會看到歷史開班、未來開班、規劃中課程的結果
+   - 規劃中的課程會標示「[規劃中]」
+
+## 功能說明
+
+- 規劃中課程會自動生成 embedding，可參與相似度查詢
+- 相似度查詢會同時考慮：歷史開班、未來開班、規劃中課程
+- 可設定最小相似度門檻（例如：只顯示 >= 60% 的）
+- 可設定 Top K（例如：只顯示前 10 名）
+- 結果會標示規劃中課程，並顯示校區、日期、難易度等資訊
+
+執行 migration 並重新啟動後端後即可測試。如有問題，請告知。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+「規劃中課程會自動生成 embedding，可參與相似度查詢」，什麼是embedding？
+
+---
+
+_**Agent (model default, mode Ask)**_
+
+
+
+---
+
+
+## 什麼是 Embedding？
+
+**Embedding（嵌入向量）**是把文字轉換成數字的技術，讓電腦能「理解」文字的語意。
+
+### 簡單比喻
+
+想像把一段文字（例如「生成式人工智慧實戰初階班」）轉換成一串數字（例如 `[0.23, -0.45, 0.67, ...]`，共 384 個數字），這串數字就代表這段文字的「語意特徵」。
+
+### 為什麼需要 Embedding？
+
+這個系統用 embedding 來計算「相似度」：
+- 當你輸入「Copilot 課程」，系統會：
+  1. 把你的查詢文字轉成 embedding（一串數字）
+  2. 把資料庫中每門課程的標題/說明也轉成 embedding
+  3. 比較這些數字串的「距離」
+  4. 距離越近 = 語意越相似 = 推薦給你
+
+### 在這個系統中如何運作？
+
+1. 爬取 TIS 課程時：
+   - 系統會把每門課程的「標題 + 說明」轉成 embedding
+   - 存入 Supabase 資料庫的 `embedding` 欄位
+
+2. 你新增「規劃中課程」時：
+   - 系統會把「班名 + 說明 + 對象」轉成 embedding
+   - 存入資料庫，這樣規劃中的課程也能參與相似度查詢
+
+3. 查詢相似課程時：
+   - 把你的查詢文字轉成 embedding
+   - 用資料庫的向量相似度查詢（pgvector）找出最相似的課程
+
+### 實際例子
+
+假設你輸入「Copilot」：
+- 系統會找到：
+  - 「Microsoft Copilot 實戰班」（相似度 95%）
+  - 「AI 工具應用入門」（相似度 75%）
+  - 「Office 365 進階應用」（相似度 60%）
+
+這些相似度是透過比較 embedding 的「距離」計算出來的。
+
+### 技術細節（可選）
+
+- 使用的模型：`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+- Embedding 維度：384 個數字（一個向量）
+- 儲存方式：Supabase 的 `vector` 型別（pgvector 擴充）
+- 相似度計算：使用「餘弦相似度」（cosine similarity）
+
+---
+
+總結：Embedding 讓系統能「理解」文字語意，並找出語意相似的課程。規劃中課程也需要 embedding，才能參與相似度查詢。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+執行 003_update_match_courses_planning.sql 時，出現錯誤訊息如下：Error: Failed to run sql query: ERROR: 42P13: cannot change return type of existing function DETAIL: Row type defined by OUT parameters is different. HINT: Use DROP FUNCTION match_courses(vector,text,text,integer) first.
+
+---
+
+_**Agent (model default, mode Ask)**_
+
+
+
+---
+
+
+PostgreSQL 不允許直接修改函數的返回類型。需要先刪除舊函數，再建立新函數。
+
+請在 Supabase SQL Editor 執行以下 SQL（先 DROP，再 CREATE）：
+
+```sql
+-- 先刪除舊的函數
+DROP FUNCTION IF EXISTS public.match_courses(extensions.vector, TEXT, TEXT, INTEGER);
+
+-- 建立新的函數（包含規劃中課程）
+CREATE OR REPLACE FUNCTION public.match_courses(
+    query_embedding extensions.vector(384),
+    start_from TEXT,
+    start_to TEXT,
+    match_count INT DEFAULT 10
+)
+RETURNS TABLE (
+    id TEXT,
+    title TEXT,
+    start_date TEXT,
+    level TEXT,
+    status TEXT,
+    campus TEXT,
+    similarity FLOAT
+)
+LANGUAGE sql STABLE
+AS $$
+    SELECT
+        c.id,
+        c.title,
+        c.start_date,
+        c.level,
+        c.status,
+        c.campus,
+        1 - (c.embedding <=> query_embedding) AS similarity
+    FROM public.courses c
+    WHERE c.embedding IS NOT NULL
+      AND (
+          -- 已確定開班的課程：檢查日期範圍
+          (c.status != 'planning' AND 
+           (start_from IS NULL OR c.start_date >= start_from) AND
+           (start_to IS NULL OR c.start_date <= start_to))
+          OR
+          -- 規劃中的課程：不限制日期，全部納入
+          (c.status = 'planning')
+      )
+    ORDER BY c.embedding <=> query_embedding
+    LIMIT match_count;
+$$;
+```
+
+**說明：**
+- `DROP FUNCTION IF EXISTS` 會先刪除舊函數（如果存在）
+- 然後 `CREATE OR REPLACE FUNCTION` 建立新函數
+- 新函數會回傳 `status` 和 `campus` 欄位，並包含規劃中課程
+
+執行後應可正常運作。若仍有問題，請告知。
+
+---
+

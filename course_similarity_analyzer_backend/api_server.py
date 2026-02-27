@@ -41,6 +41,13 @@ class SimilarityRequest(BaseModel):
     n_days_back: int = 100
     n_days_forward: int = 100
     top_k: int = 10
+    min_similarity: float = 0.0  # 最小相似度門檻（0.0-1.0，例如 0.6 表示 60%）
+
+
+class EmbeddingRequest(BaseModel):
+    title: str
+    description: str | None = None
+    audience: str | None = None
 
 
 # 啟動時載入模型與 Supabase（可改為 lazy load）
@@ -88,13 +95,14 @@ def similarity(req: SimilarityRequest):
         raise HTTPException(status_code=500, detail=f"embedding 失敗: {e}")
 
     try:
+        # 先查詢較多筆（最多 100 筆），以便後續過濾
         r = sb.rpc(
             "match_courses",
             {
                 "query_embedding": emb_list,
                 "start_from": start_from,
                 "start_to": start_to,
-                "match_count": min(req.top_k, 50),
+                "match_count": min(req.top_k * 2, 100),  # 查詢更多筆，以便過濾後仍有足夠結果
             },
         ).execute()
         rows = r.data or []
@@ -102,11 +110,42 @@ def similarity(req: SimilarityRequest):
         logger.exception("RPC match_courses 失敗")
         raise HTTPException(status_code=500, detail=f"查詢失敗: {e}")
 
+    # 過濾：最小相似度門檻
+    if req.min_similarity > 0:
+        rows = [x for x in rows if (x.get("similarity") or 0.0) >= req.min_similarity]
+
     # 可選：依 level 過濾
     if req.level and req.level.strip():
         rows = [x for x in rows if (x.get("level") or "").strip() == req.level.strip()]
 
+    # 只取前 top_k 筆
     return {"results": rows[: req.top_k]}
+
+
+@app.post("/api/generate-embedding")
+def generate_embedding(req: EmbeddingRequest):
+    """
+    為規劃中課程生成 embedding。
+    前端在新增/更新規劃中課程時，應呼叫此端點來生成 embedding。
+    """
+    title = req.title.strip()
+    description = (req.description or "").strip()
+    audience = (req.audience or "").strip()
+    
+    if not title:
+        raise HTTPException(status_code=400, detail="課程名稱（title）為必填")
+    
+    # 組合文字：標題 + 說明 + 對象
+    text = f"{title} {description} {audience}".strip()
+    
+    model = get_model()
+    try:
+        emb = model.encode(text, normalize_embeddings=True)
+        emb_list = emb.tolist()
+        return {"embedding": emb_list, "embedding_dim": len(emb_list)}
+    except Exception as e:
+        logger.exception("embedding 生成失敗")
+        raise HTTPException(status_code=500, detail=f"embedding 生成失敗: {e}")
 
 
 @app.get("/api/health")
