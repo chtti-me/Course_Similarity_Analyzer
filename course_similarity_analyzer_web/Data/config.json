@@ -1,0 +1,5 @@
+{
+  "SUPABASE_URL": "https://geqyzvyzbnkmdmcrvock.supabase.co",
+  "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlcXl6dnl6Ym5rbWRtY3J2b2NrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MTkzOTksImV4cCI6MjA4NjA5NTM5OX0.HBujy1tymX3C5b-8NdFjtbxjv7e6o7iZAluKthJVL2E",
+  "API_BASE_URL": "http://localhost:8000"
+}

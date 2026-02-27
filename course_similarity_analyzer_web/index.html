@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Similarity Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 頂部導覽：紅框四功能 -->
+    <header class="nav" role="navigation" aria-label="主要功能">
+      <h1 class="title">Course Similarity Analyzer (MVP)</h1>
+      <nav class="tabs" id="mainTabs">
+        <button type="button" class="tab" data-tab="sync" data-admin-only>① 同步爬取 TIS</button>
+        <button type="button" class="tab" data-tab="planning">② 登錄規劃中課程</button>
+        <button type="button" class="tab" data-tab="similarity">③ 相似度查詢/建議</button>
+        <button type="button" class="tab" data-tab="browse">④ 資料庫瀏覽</button>
+      </nav>
+      <div class="auth-area">
+        <span class="user-info" id="userInfo"></span>
+        <button type="button" class="btn btn-ghost" id="btnLogin">登入</button>
+        <button type="button" class="btn btn-ghost" id="btnLogout" hidden>登出</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- ① 同步爬取 TIS（僅管理員） -->
+      <section id="panel-sync" class="panel" hidden>
+        <h2>同步爬取 TIS</h2>
+        <p class="desc">同步由後端排程執行 <code>sync_cli.py</code>，請在管理員電腦設定每日排程。下方顯示最近一次同步紀錄。</p>
+        <div id="syncLog" class="sync-log"></div>
+      </section>
+
+      <!-- ② 登錄規劃中課程 -->
+      <section id="panel-planning" class="panel" hidden>
+        <h2>登錄規劃中課程</h2>
+        <p class="desc">規劃中課程列表；管理員可新增/編輯/刪除，一般使用者僅可檢視。</p>
+        <div class="toolbar" data-admin-only>
+          <button type="button" class="btn btn-primary" id="btnAddPlanning">新增規劃中課程</button>
+        </div>
+        <div id="planningList" class="table-wrap"></div>
+      </section>
+
+      <!-- ③ 相似度查詢/建議 -->
+      <section id="panel-similarity" class="panel" hidden>
+        <h2>相似度查詢/建議</h2>
+        <p class="desc">輸入你打算開的課，系統會在：歷史開班 + 未來即將開班 + 規劃中課程中找出相似者。</p>
+        <div class="form">
+          <label>你要開的班名</label>
+          <input type="text" id="similarityQuery" placeholder="例如：Copilot">
+          <label>你要開的難易度</label>
+          <select id="similarityLevel">
+            <option value="">— 請選擇 —</option>
+            <option value="入門">入門</option>
+            <option value="中階">中階</option>
+            <option value="進階">進階</option>
+          </select>
+          <label>比較: 歷史開班 (今天往前 N 天)</label>
+          <input type="range" id="daysBack" min="0" max="365" value="100">
+          <span id="daysBackVal">100</span> 天
+          <label>比較: 未來即將開班 (今天往後 M 天)</label>
+          <input type="range" id="daysForward" min="0" max="365" value="100">
+          <span id="daysForwardVal">100</span> 天
+          <button type="button" class="btn btn-primary" id="btnSearchSimilarity">查詢相似課程</button>
+        </div>
+        <div id="similarityResults" class="results"></div>
+      </section>
+
+      <!-- ④ 資料庫瀏覽 -->
+      <section id="panel-browse" class="panel" hidden>
+        <h2>資料庫瀏覽</h2>
+        <p class="desc">檢視目前資料庫所有課程；管理員可編輯/刪除，一般使用者僅可檢視。</p>
+        <div id="browseTable" class="table-wrap"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 登入彈窗 -->
+  <dialog id="loginDialog">
+    <form method="dialog">
+      <h3>登入</h3>
+      <label>Email</label>
+      <input type="email" id="loginEmail" required>
+      <label>密碼</label>
+      <input type="password" id="loginPassword" required>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary">登入</button>
+        <button type="button" class="btn btn-ghost" id="btnCancelLogin">取消</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 新增/編輯規劃中課程彈窗 -->
+  <dialog id="planningFormDialog">
+    <form method="dialog" id="planningForm">
+      <h3 id="planningFormTitle">新增規劃中課程</h3>
+      <input type="hidden" id="planningId">
+      <label>課程名稱</label>
+      <input type="text" id="planningTitle" required>
+      <label>難易度</label>
+      <select id="planningLevel">
+        <option value="">—</option>
+        <option value="入門">入門</option>
+        <option value="中階">中階</option>
+        <option value="進階">進階</option>
+      </select>
+      <label>說明（選填）</label>
+      <textarea id="planningDescription" rows="3"></textarea>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-primary">儲存</button>
+        <button type="button" class="btn btn-ghost" id="btnCancelPlanning">取消</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
