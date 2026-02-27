@@ -4000,3 +4000,1034 @@ Supabase（Supabase 服務）繼續用你現在那一個專案，不用搬家。
 
 ---
 
+_**User (2026-02-27 01:27Z)**_
+
+找不到「類型選：Web Service（Web 服務）」
+
+---
+
+_**Agent (model default, mode Agent)**_
+
+
+
+---
+
+
+查詢 Zeabur 的最新部署方式，確認正確的服務類型與設定：
+
+
+---
+
+<tool-use data-tool-type="search" data-tool-name="web_search">
+<details>
+            <summary>Tool use: **web_search** • Searched web `Zeabur deploy Python FastAPI 2025 how to deploy web service` • **1** results</summary>
+        
+| Title | URL | Chunk |
+|-------|-----|-------|
+| Web search results for query: 
+
+User: 讀取一下這個專案的內容，這是你剛剛幫我建立的程式碼
+
+瞭解功能之後，請告訴我該怎麼做才可以啟動，一步一步跟我說，指導我做。我目前已經申請好Supabase帳號、建立好專案了。但後續都沒有開始。
+
+
+
+AI: 
+檢視專案結構與主要檔案，了解功能後提供啟動步驟。
+
+
+
+
+AI: 
+檢視專案結構與主要檔案，了解功能後提供啟動步驟。
+
+
+
+
+AI: 
+讀取正確路徑的檔案：
+
+
+
+
+AI: 
+讀取正確路徑的檔案：
+
+
+
+
+AI: 
+檢視後端相關檔案，以提供完整的啟動步驟：
+
+
+
+
+AI: 
+檢視後端相關檔案，以提供完整的啟動步驟：
+
+
+
+
+AI: 
+這是一個課程相似度分析系統，功能包括：
+- ① 同步爬取 TIS 課程資料（僅管理員）
+- ② 登錄規劃中
+... (trimmed 848 characters)
+rity_analyzer_web/Data/config.json`，填入你的 Supabase 資訊。
+
+
+
+
+AI: 
+這是一個課程相似度分析系統，功能包括：
+- ① 同步爬取 TIS 課程資料（僅管理員）
+- ② 登錄規劃中
+... (trimmed 848 characters)
+rity_analyzer_web/Data/config.json`，填入你的 Supabase 資訊。
+
+
+
+
+AI: 
+請開啟 `course_similarity_analyzer_web/Data/config.json`
+... (trimmed 394 characters)
+_similarity_analyzer_backend` 資料夾建立 `.env` 檔案（如果還沒有）。
+
+
+
+
+AI: 
+請開啟 `course_similarity_analyzer_web/Data/config.json`
+... (trimmed 394 characters)
+_similarity_analyzer_backend` 資料夾建立 `.env` 檔案（如果還沒有）。
+
+
+
+
+AI: 
+檢查是否已有 `.env` 檔案：
+
+
+
+
+AI: 
+檢查是否已有 `.env` 檔案：
+
+
+
+
+AI: 
+在 `course_similarity_analyzer_backend` 資料夾建立 `.env` 檔
+... (trimmed 317 characters)
+後端 Python 套件
+開啟終端機（PowerShell 或命令提示字元），切換到後端資料夾並安裝套件：
+
+
+
+
+AI: 
+在 `course_similarity_analyzer_backend` 資料夾建立 `.env` 檔
+... (trimmed 317 characters)
+後端 Python 套件
+開啟終端機（PowerShell 或命令提示字元），切換到後端資料夾並安裝套件：
+
+
+
+
+AI: 
+Python 已安裝。建議使用虛擬環境（可選但建議）。安裝後端依賴：
+
+
+
+
+AI: 
+Python 已安裝。建議使用虛擬環境（可選但建議）。安裝後端依賴：
+
+
+
+
+AI: 
+修正路徑問題：
+
+
+
+
+AI: 
+修正路徑問題：
+
+
+
+
+AI: 
+後端套件已安裝完成。
+
+步驟 8：啟動後端 API 伺服器
+開啟新的終端機視窗（保持開啟），執行：
+
+``
+... (trimmed 911 characters)
+- 設定排程：將 `sync_cli.py` 加入系統排程，每日自動同步
+
+需要我協助檢查設定或解決問題嗎？
+
+
+
+AI: 
+後端套件已安裝完成。
+
+步驟 8：啟動後端 API 伺服器
+開啟新的終端機視窗（保持開啟），執行：
+
+``
+... (trimmed 911 characters)
+- 設定排程：將 `sync_cli.py` 加入系統排程，每日自動同步
+
+需要我協助檢查設定或解決問題嗎？
+
+
+
+User: INFO:     127.0.0.1:54417 - "GET /course_similarity_analyzer_web/index.html HTTP/1.1" 404 Not Found
+
+
+
+AI: 
+後端 API 伺服器（`api_server.py`）只提供 API，不提供前端 HTML。檢查 `api_server.py` 的設定：
+
+
+
+
+AI: 
+後端 API 伺服器（`api_server.py`）只提供 API，不提供前端 HTML。檢查 `api_server.py` 的設定：
+
+
+
+
+AI: 
+後端 API 伺服器（`api_server.py`）只提供 API，不提供前端 HTML。請依以下方式啟
+... (trimmed 458 characters)
+（Ritwick Dey 開發）
+- 安裝後再依上述步驟開啟
+
+檢查 Live Server 是否已安裝：
+
+
+
+
+AI: 
+後端 API 伺服器（`api_server.py`）只提供 API，不提供前端 HTML。請依以下方式啟
+... (trimmed 458 characters)
+（Ritwick Dey 開發）
+- 安裝後再依上述步驟開啟
+
+檢查 Live Server 是否已安裝：
+
+
+
+
+AI: 
+Live Server 已安裝。請依以下步驟開啟前端：
+
+## 正確的開啟步驟
+
+1. 在 VS Code
+... (trimmed 579 characters)
+
+2. 是否看到 VS Code 右下角有「Go Live」按鈕？
+3. 後端 API 伺服器是否還在執行？
+
+
+
+AI: 
+Live Server 已安裝。請依以下步驟開啟前端：
+
+## 正確的開啟步驟
+
+1. 在 VS Code
+... (trimmed 579 characters)
+
+2. 是否看到 VS Code 右下角有「Go Live」按鈕？
+3. 後端 API 伺服器是否還在執行？
+
+
+
+User: 後端有在執行了
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
+前端也看得到畫面了
+但是 登入按鈕 按下去之後沒有反應
+
+
+
+User: script.js:218 Uncaught SyntaxError: Unexpected identifier 'similarity'
+index.html:147 Live reload enabled.
+
+
+
+
+User: For the code present, we get this error:
+```
+偵測到無法執行到的
+... (trimmed 57 characters)
+on. @course_similarity_analyzer_web/script.js:217-220 
+
+
+
+User: 目前已經可以用admin權限登入前台了
+
+
+
+AI: 
+第 218 行有語法錯誤：字串中的引號衝突。檢查並修正：
+
+
+
+
+AI: 
+第 218 行有語法錯誤：字串中的引號衝突。檢查並修正：
+
+
+
+
+User: 引號衝突我已經修改好了，目前可以登入了，但有個問題：
+好像缺少了爬取離線網頁的功能，這個功能在測試上很方便
+C:\course_overlap_mvp\sample_html
+
+
+
+AI: 我先快速把後端爬取流程摸清楚（`scraper.py` / `sync_cli.py` 現在怎麼抓 TIS、
+... (trimmed 93 characters)
+析成課程資料，方便測試，不用連 TIS。接著我會實際跑一次（用不存在也不會炸的方式）確認指令與錯誤訊息正常。
+
+
+
+AI: 我先快速把後端爬取流程摸清楚（`scraper.py` / `sync_cli.py` 現在怎麼抓 TIS、
+... (trimmed 93 characters)
+析成課程資料，方便測試，不用連 TIS。接著我會實際跑一次（用不存在也不會炸的方式）確認指令與錯誤訊息正常。
+
+
+
+AI: 我抓到關鍵了：目前 `scraper.py` 只會用 `requests` 連線抓 TIS 網頁，完全沒有「
+... (trimmed 83 characters)
+aper.py` 單獨測試與 `sync_cli.py` 寫入 Supabase），讓你指定資料夾就能爬取。
+
+
+
+AI: 我抓到關鍵了：目前 `scraper.py` 只會用 `requests` 連線抓 TIS 網頁，完全沒有「
+... (trimmed 83 characters)
+aper.py` 單獨測試與 `sync_cli.py` 寫入 Supabase），讓你指定資料夾就能爬取。
+
+
+
+AI: 很好，離線模式其實已經跑得動了（它成功讀到你那個資料夾的多個 HTML，並解析出上百筆課程）。我接下來會做兩
+... (trimmed 35 characters)
+常、再把 Windows 終端機中文亂碼問題修掉，讓你在 PowerShell 看到的訊息都是正常繁體中文。
+
+
+
+AI: 很好，離線模式其實已經跑得動了（它成功讀到你那個資料夾的多個 HTML，並解析出上百筆課程）。我接下來會做兩
+... (trimmed 35 characters)
+常、再把 Windows 終端機中文亂碼問題修掉，讓你在 PowerShell 看到的訊息都是正常繁體中文。
+
+
+
+AI: Nice，離線爬取功能已經能直接吃你的 `C:\course_overlap_mvp\sample_html
+... (trimmed 50 characters)
+第三方套件的英文提示盡量壓到最少（避免干擾），並跑一次確認輸出乾淨；最後再檢查剛改的檔案沒有語法/靜態錯誤。
+
+
+
+AI: Nice，離線爬取功能已經能直接吃你的 `C:\course_overlap_mvp\sample_html
+... (trimmed 50 characters)
+第三方套件的英文提示盡量壓到最少（避免干擾），並跑一次確認輸出乾淨；最後再檢查剛改的檔案沒有語法/靜態錯誤。
+
+
+
+AI: ## 你要的「離線網頁爬取」功能已補上（可直接用你的資料夾）
+
+### 你現在可以怎麼用（最常用的 2 種）
+... (trimmed 722 characters)
+y-run`，讓同步流程可切到離線資料來源；並加上 Windows 終端機 UTF-8 設定，避免中文亂碼。
+
+
+
+User: 目前應該完成8成功能了，但是感覺在資料剖析上、使用介面上還有問題https://drive.google.c
+... (trimmed 301 characters)
+這個系統時的必須欄位
+
+目前看起來 從資料爬取、儲存、擷取到頁面上 似乎都還有待除錯 你可以幫我修改一下嗎
+
+
+
+
+AI: 
+檢查目前的資料爬取、儲存與前端顯示邏輯，修正欄位對應與顯示順序。
+
+
+
+
+AI: 
+檢查目前的資料爬取、儲存與前端顯示邏輯，修正欄位對應與顯示順序。
+
+
+
+
+AI: 
+檢查實際 HTML 結構，以正確解析欄位：
+
+
+
+
+AI: 
+檢查實際 HTML 結構，以正確解析欄位：
+
+
+
+
+AI: 
+改用其他方式檢查 HTML 結構：
+
+
+
+
+AI: 
+改用其他方式檢查 HTML 結構：
+
+
+
+
+AI: 
+建立待辦清單，逐步修正資料解析與顯示問題：
+
+
+
+
+AI: 
+建立待辦清單，逐步修正資料解析與顯示問題：
+
+
+
+
+AI: 
+建立 migration 新增「導師」欄位，並修改解析與顯示邏輯：
+
+
+
+
+AI: 
+建立 migration 新增「導師」欄位，並修改解析與顯示邏輯：
+
+
+
+
+AI: 
+修改 scraper.py，正確解析 TIS 表格結構：
+
+
+
+
+AI: 
+修改 scraper.py，正確解析 TIS 表格結構：
+
+
+
+
+AI: 
+更新資料庫寫入邏輯，加入 instructor 欄位：
+
+
+
+
+AI: 
+更新資料庫寫入邏輯，加入 instructor 欄位：
+
+
+
+
+AI: 
+檢查語法錯誤：
+
+
+
+
+AI: 
+檢查語法錯誤：
+
+
+
+
+AI: 
+## 已完成的修改
+
+### 1. 資料庫結構
+- 新增 `migrations/002_add_inst
+... (trimmed 1161 characters)
+後，前端應會顯示正確的欄位順序與資料。若仍有問題，請提供實際的 HTML 結構範例，我可進一步調整解析邏輯。
+
+
+
+AI: 
+## 已完成的修改
+
+### 1. 資料庫結構
+- 新增 `migrations/002_add_inst
+... (trimmed 1161 characters)
+後，前端應會顯示正確的欄位順序與資料。若仍有問題，請提供實際的 HTML 結構範例，我可進一步調整解析邏輯。
+
+
+
+User: 我現在把離線爬取的資料更改位置到：C:\Course_Similarity_Analyzer\sample_
+... (trimmed 57 characters)
+們現在正在製作的頁面 是黑色的 顯然裡面很多資料都是空白的 應該是在抓取資料時 有什麼錯誤吧 可以修正一下嗎
+
+
+
+AI: 
+檢視實際 HTML 結構，修正解析邏輯：
+
+
+
+
+AI: 
+檢視實際 HTML 結構，修正解析邏輯：
+
+
+
+
+AI: 
+根據實際 HTML 結構，修正解析邏輯：
+
+
+
+
+AI: 
+根據實際 HTML 結構，修正解析邏輯：
+
+
+
+
+AI: 
+重新讀取檔案並修正：
+
+
+
+
+AI: 
+重新讀取檔案並修正：
+
+
+
+
+AI: 
+測試新的解析邏輯：
+
+
+
+
+AI: 
+測試新的解析邏輯：
+
+
+
+
+AI: 
+檢查解析出的資料是否包含所有欄位：
+
+
+
+
+AI: 
+檢查解析出的資料是否包含所有欄位：
+
+
+
+
+AI: 
+解析結果正確。建立測試腳本驗證所有欄位，然後提供完整的使用說明：
+
+
+
+
+AI: 
+解析結果正確。建立測試腳本驗證所有欄位，然後提供完整的使用說明：
+
+
+
+
+AI: 
+改用檔案方式測試：
+
+
+
+
+AI: 
+改用檔案方式測試：
+
+
+
+
+AI: 
+解析結果正確。清理測試檔案，並提供完整使用說明：
+
+
+
+
+AI: 
+解析結果正確。清理測試檔案，並提供完整使用說明：
+
+
+
+
+AI: 
+解析邏輯已修正。請依以下步驟更新資料：
+
+## 已完成的修正
+
+### 1. 資料解析邏輯（`scrape
+... (trimmed 1155 characters)
+易度：`None`（TIS 頁面沒有此欄位）
+
+執行上述步驟後，前端應會顯示正確的資料。若仍有問題，請告知。
+
+
+
+AI: 
+解析邏輯已修正。請依以下步驟更新資料：
+
+## 已完成的修正
+
+### 1. 資料解析邏輯（`scrape
+... (trimmed 1155 characters)
+易度：`None`（TIS 頁面沒有此欄位）
+
+執行上述步驟後，前端應會顯示正確的資料。若仍有問題，請告知。
+
+
+
+User: 目前似乎成功了！我要怎麼把這個程式放到zeabur給大家用？
+
+
+
+AI: 太好了，整套流程已經跑起來了 🎉  
+下面用「盡量少步驟但可以真的部署成功」的方式，帶你把系統放到 Zea
+... (trimmed 3042 characters)
+py`、`api_server.py`、`config.json` 看有沒有還需要為雲端環境特別調整的地方。
+
+
+
+AI: 太好了，整套流程已經跑起來了 🎉  
+下面用「盡量少步驟但可以真的部署成功」的方式，帶你把系統放到 Zea
+... (trimmed 3042 characters)
+py`、`api_server.py`、`config.json` 看有沒有還需要為雲端環境特別調整的地方。
+
+Most important and relevant query: 
+
+User: 找不到「類型選：Web Service（Web 服務）」 |  | Links:<br/>1. [Supabase Bootstrap：啟動新專案的最快方式](https://codelove.tw/@tony/post/63rby3)<br/>2. [12.  虛擬環境與套件 ¶](https://docs.python.org/zh-tw/3/tutorial/venv.html)<br/>3. [FastAPI CRUD Example: A Simple Guide](https://www.thedetroitbureau.com/today-report/fastapi-crud-example-a-simple-guide-1764799193)<br/><br/>抱歉，搜尋結果中沒有找到 Zeabur 平台的相關文件。不過我可以根據你目前的情況，給你部署到 Zeabur 的通用步驟：<br/><br/>## 部署到 Zeabur 的基本流程<br/><br/>### 1. **準備專案結構**<br/>確保你的專案包含：<br/>- `requirements.txt`（Python 後端依賴）<br/>- `api_server.py`（FastAPI 主檔案）<br/>- `course_similarity_analyzer_web/`（前端檔案）<br/>- `.env` 環境變數設定<br/><br/>### 2. **建立 Zeabur 帳號並連結 Git**<br/>- 在 Zeabur 註冊帳號<br/>- 將專案推到 GitHub<br/>- 在 Zeabur 中授予 GitHub 存取權限<br/><br/>### 3. **在 Zeabur 建立新服務**<br/>Zeabur 的介面應該會有「新增服務」或「部署」選項，通常步驟是：<br/>- 選擇 **Python** 或 **General**（通用）runtime<br/>- 選擇你的 GitHub 儲存庫<br/>- 設定啟動命令：`uvicorn api_server:app --host 0.0.0.0 --port 8000`<br/><br/>### 4. **設定環境變數**<br/>在 Zeabur 的專案設定中，添加：<br/>- `SUPABASE_URL`<br/>- `SUPABASE_ANON_KEY`<br/>- `SUPABASE_SERVICE_ROLE_KEY`<br/>- 其他 `.env` 中的變數<br/><br/>### 5. **處理靜態檔案（前端）**<br/>如果前端是靜態 HTML，Zeabur 可能需要在 FastAPI 中設定靜態檔案路由。確保 `api_server.py` 有設定：<br/>```python<br/>from fastapi.staticfiles import StaticFiles<br/>app.mount("/", StaticFiles(directory="course_similarity_analyzer_web", html=True), name="frontend")<br/>```<br/><br/>**建議**：直接查看 Zeabur 官方文件或在他們的 Dashboard 中尋找「Web Service」選項，介面可能因版本更新而異。 |
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/api_server.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+---
+
+
+檢查專案設定，並提供更準確的 Zeabur 部署指引：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/config.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/requirements.txt</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="list_dir">
+<details>
+            <summary>Tool use: **list_dir** • Listed directory, 0 results</summary>
+        
+No results found
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+建立 Zeabur 部署所需的檔案，並提供更準確的指引：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="write">
+
+<details><summary>Tool use: **write** • Edit file: course_similarity_analyzer_backend/Procfile</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: 1
+
+```diff
+@@ -1,1 +1,2 @@
+- 
++ web: uvicorn api_server:app --host 0.0.0.0 --port $PORT
++ 
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="write">
+
+<details><summary>Tool use: **write** • Edit file: course_similarity_analyzer_backend/runtime.txt</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: 1
+
+```diff
+@@ -1,1 +1,2 @@
+- 
++ python-3.11
++ 
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/api_server.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+調整 `api_server.py` 以正確讀取 Zeabur 的 PORT 環境變數：
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="search_replace">
+
+<details><summary>Tool use: **search_replace** • Edit file: course_similarity_analyzer_backend/config.py</summary>
+
+**Chunk 1**
+Lines added: 2, lines removed: 1
+
+```diff
+@@ -43,4 +43,5 @@
+  # =========================
+  API_HOST = os.environ.get("API_HOST", "0.0.0.0")
+- API_PORT = int(os.environ.get("API_PORT", "8000"))
++ # Zeabur 會提供 PORT 環境變數，優先使用它
++ API_PORT = int(os.environ.get("PORT", os.environ.get("API_PORT", "8000")))
+  
+```
+
+</details>
+
+</tool-use>
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="write">
+
+<details><summary>Tool use: **write** • Edit file: DEPLOY_ZEABUR.md</summary>
+
+**Chunk 1**
+Lines added: 165, lines removed: 1
+
+```diff
+@@ -1,1 +1,165 @@
+- 
++ # 部署到 Zeabur 完整指南
++ 
++ ## 前置準備
++ 
++ ### 1. 將專案推送到 GitHub
++ 
++ &#96;&#96;&#96;bash
++ cd C:\Course_Similarity_Analyzer
++ git init
++ git add .
++ git commit -m "準備部署到 Zeabur"
++ git branch -M main
++ git remote add origin https://github.com/你的帳號/你的專案名稱.git
++ git push -u origin main
++ &#96;&#96;&#96;
++ 
++ ### 2. 準備 Supabase 資訊
++ 
++ 請準備好以下資訊（在 Supabase Dashboard &gt; Settings &gt; API）：
++ - &#96;SUPABASE_URL&#96;：你的 Supabase 專案 URL
++ - &#96;SUPABASE_SERVICE_ROLE_KEY&#96;：Service Role Key（**私密金鑰，不要公開**）
++ 
++ ---
++ 
++ ## 在 Zeabur 部署後端 API
++ 
++ ### 步驟 1：建立新專案
++ 
++ 1. 登入 [Zeabur](https://zeabur.com)
++ 2. 點擊「**New Project**」或「**新增專案**」
++ 3. 輸入專案名稱（例如：&#96;course-similarity-analyzer&#96;）
++ 
++ ### 步驟 2：連結 GitHub Repository
++ 
++ 1. 在專案頁面，點擊「**+ New Service**」或「**新增服務**」
++ 2. 選擇「**GitHub**」或「**Import from Git**」
++ 3. 選擇你的 Repository（儲存庫）
++ 4. 授權 Zeabur 存取你的 GitHub
++ 
++ ### 步驟 3：設定後端服務
++ 
++ Zeabur 會自動偵測到這是 Python 專案。如果沒有自動偵測，請手動設定：
++ 
++ #### 方式 A：使用自動偵測（推薦）
++ 
++ Zeabur 應該會自動偵測到 &#96;requirements.txt&#96; 和 &#96;Procfile&#96;，直接按「**Deploy**」即可。
++ 
++ #### 方式 B：手動設定
++ 
++ 如果沒有自動偵測，請在服務設定中：
++ 
++ 1. **Runtime（執行環境）**：選擇「**Python**」
++ 2. **Root Directory（根目錄）**：填 &#96;course_similarity_analyzer_backend&#96;
++ 3. **Build Command（建置指令）**：
++    &#96;&#96;&#96;bash
++    pip install -r requirements.txt
++    &#96;&#96;&#96;
++ 4. **Start Command（啟動指令）**：
++    &#96;&#96;&#96;bash
++    uvicorn api_server:app --host 0.0.0.0 --port $PORT
++    &#96;&#96;&#96;
++ 
++ ### 步驟 4：設定環境變數
++ 
++ 在服務的「**Environment Variables**」或「**環境變數**」區塊，新增：
++ 
++ | 變數名稱 | 值 | 說明 |
++ |---------|-----|------|
++ | &#96;SUPABASE_URL&#96; | &#96;https://你的專案.supabase.co&#96; | Supabase 專案 URL |
++ | &#96;SUPABASE_SERVICE_ROLE_KEY&#96; | &#96;你的_service_role_key&#96; | **設為 Secret（私密）** |
++ | &#96;EMBEDDING_MODEL_NAME&#96; | &#96;sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&#96; | （可選，預設值） |
++ | &#96;TOP_K&#96; | &#96;10&#96; | （可選，預設值） |
++ 
++ **重要**：&#96;SUPABASE_SERVICE_ROLE_KEY&#96; 務必設為 **Secret（私密）**，不要公開顯示。
++ 
++ ### 步驟 5：部署
++ 
++ 1. 點擊「**Deploy**」或「**部署**」
++ 2. 等待建置完成（第一次會比較久，因為要下載 embedding 模型）
++ 3. 部署成功後，會得到一個網址，例如：&#96;https://your-backend-name.zeabur.app&#96;
++ 
++ **請記下這個後端網址，下一步會用到！**
++ 
++ ---
++ 
++ ## 在 Zeabur 部署前端
++ 
++ ### 步驟 1：新增前端服務
++ 
++ 1. 在同一個 Zeabur 專案中，點擊「**+ New Service**」
++ 2. 選擇「**Static Site**」或「**靜態網站**」
++ 3. 選擇同一個 GitHub Repository
++ 
++ ### 步驟 2：設定前端服務
++ 
++ 1. **Root Directory（根目錄）**：填 &#96;course_similarity_analyzer_web&#96;
++ 2. **Output Directory（輸出目錄）**：留空或填 &#96;.&#96;（表示整個資料夾就是網站根目錄）
++ 
++ ### 步驟 3：更新前端設定檔
++ 
++ **在部署前，先在本機修改 &#96;config.json&#96;：**
++ 
++ 開啟 &#96;course_similarity_analyzer_web/Data/config.json&#96;，把 &#96;API_BASE_URL&#96; 改成你剛剛得到的後端網址：
++ 
++ &#96;&#96;&#96;json
++ {
++   "SUPABASE_URL": "https://你的專案.supabase.co",
++   "SUPABASE_ANON_KEY": "你的_anon_key",
++   "API_BASE_URL": "https://your-backend-name.zeabur.app"
++ }
++ &#96;&#96;&#96;
++ 
++ 然後 commit 並 push：
++ 
++ &#96;&#96;&#96;bash
++ git add course_similarity_analyzer_web/Data/config.json
++ git commit -m "設定 Zeabur 後端 API_BASE_URL"
++ git push
++ &#96;&#96;&#96;
++ 
++ ### 步驟 4：部署前端
++ 
++ 1. 回到 Zeabur 前端服務頁面
++ 2. 點擊「**Deploy**」或「**重新部署**」
++ 3. 部署成功後，會得到前端網址，例如：&#96;https://your-frontend-name.zeabur.app&#96;
++ 
++ ---
++ 
++ ## 測試部署
++ 
++ 1. 在瀏覽器開啟前端網址
++ 2. 用你的 Supabase 帳號登入
++ 3. 測試功能：
++    - 點擊「④ 資料庫瀏覽」：應該能看到課程資料
++    - 點擊「③ 相似度查詢/建議」：輸入關鍵字測試相似度查詢
++ 
++ ---
++ 
++ ## 常見問題
++ 
++ ### Q1：後端啟動失敗，顯示「PORT 未設定」
++ 
++ **解決方法**：確認 &#96;config.py&#96; 已更新為優先讀取 &#96;PORT&#96; 環境變數（已修正）。
++ 
++ ### Q2：前端無法連線到後端 API
++ 
++ **檢查項目**：
++ 1. 確認 &#96;config.json&#96; 中的 &#96;API_BASE_URL&#96; 是正確的後端網址
++ 2. 確認後端服務正在運行（在 Zeabur Dashboard 查看 Logs）
++ 3. 確認後端的 CORS 設定允許前端網域（目前設定為 &#96;allow_origins=["*"]&#96;，應該沒問題）
++ 
++ ### Q3：後端第一次啟動很慢
++ 
++ **原因**：需要下載 embedding 模型（約 400MB），這是正常的。
++ 
++ ### Q4：如何查看後端 Logs（日誌）？
++ 
++ 在 Zeabur Dashboard &gt; 後端服務 &gt; 「**Logs**」或「**日誌**」分頁。
++ 
++ ---
++ 
++ ## 完成！
++ 
++ 現在你的系統已經部署到 Zeabur，可以分享前端網址給大家使用了！🎉
++ 
+```
+
+</details>
+
+</tool-use>
+
+---
+
+
+
+---
+
+
+已建立部署所需檔案。以下是簡化版步驟：
+
+## 在 Zeabur 部署的簡化步驟
+
+### 第一步：準備 Git Repository
+
+如果還沒推送到 GitHub，先執行：
+
+```bash
+cd C:\Course_Similarity_Analyzer
+git init
+git add .
+git commit -m "準備部署到 Zeabur"
+# 然後推送到你的 GitHub Repository
+```
+
+### 第二步：在 Zeabur 建立後端服務
+
+1. 登入 Zeabur，建立新專案
+2. 點擊「**+ New Service**」或「**新增服務**」
+3. 選擇「**Import from Git**」或「**從 Git 匯入**」
+4. 連結你的 GitHub Repository
+5. Zeabur 會自動偵測到 Python 專案（因為有 `requirements.txt` 和 `Procfile`）
+
+如果沒有自動偵測，請手動設定：
+- **Root Directory（根目錄）**：`course_similarity_analyzer_backend`
+- **Start Command（啟動指令）**：`uvicorn api_server:app --host 0.0.0.0 --port $PORT`
+
+6. 在「**Environment Variables**」新增：
+   - `SUPABASE_URL` = `你的 Supabase URL`
+   - `SUPABASE_SERVICE_ROLE_KEY` = `你的 service_role_key`（設為 Secret）
+
+7. 點擊「**Deploy**」，等待完成後記下後端網址（例如：`https://xxx.zeabur.app`）
+
+### 第三步：在 Zeabur 建立前端服務
+
+1. 在同一個專案中，再點擊「**+ New Service**」
+2. 選擇「**Static Site**」或「**靜態網站**」
+3. 選擇同一個 GitHub Repository
+4. 設定：
+   - **Root Directory（根目錄）**：`course_similarity_analyzer_web`
+   - **Output Directory（輸出目錄）**：留空
+
+5. 在本機修改 `course_similarity_analyzer_web/Data/config.json`，把 `API_BASE_URL` 改成你的後端網址：
+
+```json
+{
+  "SUPABASE_URL": "https://你的專案.supabase.co",
+  "SUPABASE_ANON_KEY": "你的_anon_key",
+  "API_BASE_URL": "https://你的後端網址.zeabur.app"
+}
+```
+
+6. Commit 並 push：
+```bash
+git add course_similarity_analyzer_web/Data/config.json
+git commit -m "設定 Zeabur 後端網址"
+git push
+```
+
+7. 回到 Zeabur 前端服務頁面，點擊「**Deploy**」
+
+### 完成
+
+現在可以分享前端網址給大家使用了。
+
+---
+
+如果 Zeabur 介面找不到「Web Service」選項，請試試：
+- 「**Import from Git**」→ 選擇 Repository → Zeabur 會自動偵測
+- 或「**+ New Service**」→ 選擇「**Python**」或「**General**」
+
+已建立 `DEPLOY_ZEABUR.md`，包含更詳細的說明與常見問題。若在 Zeabur 介面中看到不同選項名稱，請告訴我，我可以協助調整。
+
+---
+

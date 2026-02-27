@@ -42,4 +42,5 @@ TOP_K = int(os.environ.get("TOP_K", "10"))
 # 相似度 API（給前端 ③ 呼叫，可選）
 # =========================
 API_HOST = os.environ.get("API_HOST", "0.0.0.0")
-API_PORT = int(os.environ.get("API_PORT", "8000"))
+# Zeabur 會提供 PORT 環境變數，優先使用它
+API_PORT = int(os.environ.get("PORT", os.environ.get("API_PORT", "8000")))
