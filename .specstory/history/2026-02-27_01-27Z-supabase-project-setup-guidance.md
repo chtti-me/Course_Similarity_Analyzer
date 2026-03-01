@@ -9575,3 +9575,359 @@ User: 但聽說Zeabur快要收費了 快要沒有免費的服務的 是不是這
 
 ---
 
+_**User (2026-02-27 01:27Z)**_
+
+你幫我完成的這個專案 向量嵌入與相似度比對 是用什麼技術完成的
+
+---
+
+_**Agent (model default, mode Ask)**_
+
+
+
+---
+
+
+檢視專案中向量嵌入與相似度比對的實作：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/api_server.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/config.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/migrations/001_initial.sql</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/sync_cli.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+## 向量嵌入與相似度比對技術
+
+### 1. 向量嵌入（Embedding）生成
+
+**使用的函式庫：**
+- **`sentence-transformers`**（Python）
+  - 用於將文字轉換成向量
+
+**使用的模型：**
+- **`paraphrase-multilingual-MiniLM-L12-v2`**
+  - 多語言模型（支援繁體中文）
+  - 向量維度：**384**
+  - 來源：Hugging Face
+
+**生成方式：**
+```python
+# 在 sync_cli.py 和 api_server.py 中
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+emb = model.encode(text, normalize_embeddings=True)  # 生成 384 維向量
+```
+
+**輸入文字：**
+- 課程標題 + 說明 + 對象
+- 例如：`"生成式人工智慧實戰初階班 希望運用最新的人工智慧技術改進辦公室工作流程者"`
+
+---
+
+### 2. 向量儲存
+
+**資料庫：**
+- **Supabase**（PostgreSQL）
+
+**向量擴充：**
+- **`pgvector`**
+  - PostgreSQL 的向量擴充
+  - 支援向量型別與相似度查詢
+
+**資料表結構：**
+```sql
+embedding extensions.vector(384)  -- 儲存 384 維向量
+embedding_dim INTEGER              -- 記錄向量維度
+```
+
+---
+
+### 3. 相似度比對
+
+**使用的運算符：**
+- **`<=>`**（餘弦距離運算符）
+  - PostgreSQL/pgvector 的內建運算符
+  - 計算兩個向量的餘弦距離
+
+**相似度計算：**
+```sql
+-- 在 match_courses 函數中
+1 - (c.embedding <=> query_embedding) AS similarity
+```
+- `<=>` 回傳距離（0 = 完全相同，1 = 完全不同）
+- `1 - 距離` = 相似度（1 = 完全相同，0 = 完全不同）
+
+**查詢流程：**
+1. 使用者輸入查詢文字（例如："Copilot"）
+2. 後端用 `SentenceTransformer` 將查詢文字轉成 384 維向量
+3. 呼叫 Supabase 的 `match_courses` RPC 函數
+4. PostgreSQL 用 `<=>` 運算符找出最相似的向量
+5. 回傳相似度最高的前 K 筆課程
+
+---
+
+### 4. 技術架構圖
+
+```
+使用者輸入 "Copilot"
+    ↓
+FastAPI 後端 (api_server.py)
+    ↓
+SentenceTransformer.encode() → 384 維向量
+    ↓
+Supabase RPC: match_courses()
+    ↓
+PostgreSQL + pgvector
+    ↓
+使用 <=> 運算符計算餘弦距離
+    ↓
+ORDER BY 距離，LIMIT K
+    ↓
+回傳相似度最高的課程
+```
+
+---
+
+### 5. 關鍵技術總結
+
+| 技術 | 用途 | 函式庫/工具 |
+|------|------|------------|
+| **文字轉向量** | 將課程描述轉成數字向量 | `sentence-transformers` |
+| **向量模型** | 多語言語意理解 | `paraphrase-multilingual-MiniLM-L12-v2` |
+| **向量儲存** | 在資料庫儲存向量 | PostgreSQL + `pgvector` |
+| **相似度查詢** | 快速找出相似課程 | PostgreSQL 的 `<=>` 運算符 |
+| **相似度計算** | 餘弦相似度 | `1 - (向量1 <=> 向量2)` |
+
+---
+
+### 6. 為什麼用這些技術？
+
+- **`sentence-transformers`**：易用、支援多語言、模型品質穩定
+- **`pgvector`**：在資料庫內直接做向量查詢，速度快
+- **餘弦相似度**：適合語意相似度，計算效率高
+
+這套組合常用於語意搜尋、推薦系統等場景。
+
+---
+
+_**User (2026-02-27 01:27Z)**_
+
+Supabase RPC: match_courses()在做什麼？
+
+---
+
+_**Agent (model default, mode Ask)**_
+
+
+
+---
+
+
+檢視 `match_courses()` RPC 函數的定義與運作方式：
+
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/migrations/001_initial.sql</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/migrations/003_update_match_courses_for_planning.sql</summary>
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="read" data-tool-name="read_file">
+<details><summary>Tool use: **read_file** • Read file: course_similarity_analyzer_backend/api_server.py</summary>
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+## `match_courses()` RPC 函數說明
+
+`match_courses()` 是 Supabase 資料庫中的一個 PostgreSQL 函數（RPC = Remote Procedure Call），用於向量相似度查詢。
+
+---
+
+### 1. 函數的輸入參數
+
+```sql
+CREATE OR REPLACE FUNCTION public.match_courses(
+    query_embedding extensions.vector(384),  -- 查詢文字的向量（384 維）
+    start_from TEXT,                         -- 開始日期（例如：2024-01-01）
+    start_to TEXT,                           -- 結束日期（例如：2024-12-31）
+    match_count INT DEFAULT 10               -- 要回傳幾筆結果（預設 10 筆）
+)
+```
+
+---
+
+### 2. 函數做了什麼？
+
+#### 步驟 1：過濾條件
+```sql
+WHERE c.embedding IS NOT NULL  -- 只查有 embedding 的課程
+  AND (
+      -- 已確定開班的課程：檢查日期範圍
+      (c.status != 'planning' AND 
+       (start_from IS NULL OR c.start_date >= start_from) AND
+       (start_to IS NULL OR c.start_date <= start_to))
+      OR
+      -- 規劃中的課程：不限制日期，全部納入
+      (c.status = 'planning')
+  )
+```
+
+- 只查有 embedding 的課程
+- 已開班課程：日期需在 `start_from` 到 `start_to` 之間
+- 規劃中課程：不限制日期，全部納入
+
+#### 步驟 2：計算相似度
+```sql
+1 - (c.embedding <=> query_embedding) AS similarity
+```
+
+- `<=>` 是 pgvector 的餘弦距離運算符
+- `1 - 距離` = 相似度（0-1，1 最相似）
+
+#### 步驟 3：排序與限制
+```sql
+ORDER BY c.embedding <=> query_embedding  -- 按距離排序（距離越小越相似）
+LIMIT match_count                         -- 只取前 N 筆
+```
+
+---
+
+### 3. 回傳的結果
+
+```sql
+RETURNS TABLE (
+    id TEXT,           -- 課程 ID
+    title TEXT,        -- 課程名稱
+    start_date TEXT,   -- 開班日期
+    level TEXT,         -- 難易度
+    status TEXT,       -- 狀態（planning/scheduled）
+    campus TEXT,       -- 校區
+    similarity FLOAT   -- 相似度分數（0-1）
+)
+```
+
+---
+
+### 4. 實際運作流程
+
+假設你輸入查詢："Copilot"
+
+```
+1. 後端 API 收到查詢
+   ↓
+2. 用 SentenceTransformer 把 "Copilot" 轉成 384 維向量
+   [0.23, -0.45, 0.67, ...] (384 個數字)
+   ↓
+3. 呼叫 match_courses()，傳入：
+   - query_embedding: [0.23, -0.45, 0.67, ...]
+   - start_from: "2024-01-01"
+   - start_to: "2024-12-31"
+   - match_count: 10
+   ↓
+4. PostgreSQL 在資料庫中：
+   a. 過濾：找出有 embedding 且日期在範圍內的課程
+   b. 計算：每筆課程的 embedding 與查詢向量的距離
+   c. 排序：按距離由小到大排序
+   d. 限制：只取前 10 筆
+   ↓
+5. 回傳結果：
+   [
+     {id: "xxx", title: "Microsoft Copilot 實戰班", similarity: 0.95},
+     {id: "yyy", title: "AI 工具應用入門", similarity: 0.75},
+     ...
+   ]
+```
+
+---
+
+### 5. 為什麼用 RPC 函數？
+
+- 效能：在資料庫內直接做向量運算，比把資料拉回應用層計算更快
+- 索引：pgvector 可建立向量索引，加速查詢
+- 安全性：可透過 RLS 控制存取權限
+
+---
+
+### 6. 在程式碼中的使用
+
+```python
+# 在 api_server.py 中
+r = sb.rpc(
+    "match_courses",
+    {
+        "query_embedding": emb_list,      # 查詢向量
+        "start_from": start_from,        # 開始日期
+        "start_to": start_to,            # 結束日期
+        "match_count": min(req.top_k * 2, 100),  # 要幾筆結果
+    },
+).execute()
+```
+
+---
+
+### 總結
+
+`match_courses()` 是一個資料庫函數，負責：
+1. 接收查詢向量
+2. 在資料庫中找出最相似的課程（用向量距離）
+3. 回傳相似度最高的前 N 筆結果
+
+這樣可以讓相似度查詢在資料庫層高效完成，而不需要把大量資料拉回應用層處理。
+
+---
+
