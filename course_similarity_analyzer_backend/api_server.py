@@ -71,6 +71,12 @@ def get_supabase():
     return _sb
 
 
+@app.get("/")
+def root():
+    """給 Zeabur / 平台健康檢查用，GET / 回 200 即可通過。"""
+    return {"status": "ok", "service": "course-similarity-api"}
+
+
 @app.post("/api/similarity")
 def similarity(req: SimilarityRequest):
     """依查詢文字回傳相似課程（歷史 N 天 + 未來 M 天內）。"""

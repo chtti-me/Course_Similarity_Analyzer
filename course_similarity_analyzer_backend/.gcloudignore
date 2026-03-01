@@ -1,0 +1,9 @@
+# 上傳建置時忽略，避免把敏感或無關檔案送進 Cloud Build
+.env
+.env.*
+__pycache__
+*.py[cod]
+.git
+.gitignore
+*.md
+.gcloudignore
