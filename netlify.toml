@@ -1,0 +1,8 @@
+# Netlify 部署設定：前端靜態網站
+# 專案為 monorepo，前端在 course_similarity_analyzer_web
+# 此檔放在「儲存庫根目錄」，Netlify 會自動套用
+
+[build]
+  base = "course_similarity_analyzer_web"
+  publish = "."
+  # 純靜態站，無需 build 指令
